@@ -160,7 +160,7 @@ make start
 **Enter the system**
 
 - Load your preferred web browser
-- Go to [http://localhost](http://localhost)
+- Go to [http://localhost:3000](http://localhost:3000)
 
 
 ### Available Make Commands
