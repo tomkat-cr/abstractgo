@@ -1,6 +1,6 @@
 # Manages Docker Compose services for production deployment
 
-.PHONY: help up down restart logs build clean status shell-server shell-mongo backup restore
+.PHONY: help up down restart logs build clean status shell-server
 
 # Default target
 help:
@@ -14,9 +14,6 @@ help:
 	@echo "  clean       - Stop services and remove volumes"
 	@echo "  status      - Show service status"
 	@echo "  shell-server - Open shell in server container"
-	@echo "  shell-mongo - Open shell in mongo container"
-	@echo "  backup      - Backup MongoDB data"
-	@echo "  restore     - Restore MongoDB data from backup"
 
 # Start all services
 up:

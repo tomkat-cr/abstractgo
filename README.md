@@ -6,6 +6,7 @@
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)
 ![Python](https://img.shields.io/badge/python-%3E%3D3.11.0-green.svg)
 ![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
+![Next.js](https://img.shields.io/badge/nextjs-14.2.14-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 AbstractGo is an AI/ML solution for medical investigation classification based on title and abstracts.
@@ -46,7 +47,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 ### Frontend
 - **React** (18.2.0) - UI framework
-- **Vite** (5.3.3) - Build tool and dev server
+- **Next.js** (14.2.14) - Build tool and dev server
 - **Socket.IO Client** (4.7.5) - Real-time client ???
 
 ### Development Tools
@@ -59,7 +60,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 Before running this project, make sure you have the following installed:
 
-- **Docker** (to run the server and MongoDB locally)
+- **Docker** (to run the server locally)
 - **Node.js** (version 18.0.0 or higher)
 - **Python** (version 3.11.0 or higher)
 - **Git** (to clone the repository)
@@ -84,9 +85,9 @@ Create `.env` files in the client and server directories:
 
 **Client `.env`:**
 ```bash
-VITE_APP_DOMAIN_NAME=localhost
-VITE_API_BASE_URL=http://${VITE_APP_DOMAIN_NAME}:8000
-VITE_DEBUG=0
+NEXT_PUBLICAPP_DOMAIN_NAME=localhost
+NEXT_PUBLICAPI_BASE_URL=http://${NEXT_PUBLICAPP_DOMAIN_NAME}:8000
+NEXT_PUBLICDEBUG=0
 ```
 
 **Server `.env`:**
@@ -105,9 +106,9 @@ ADMIN_PASSWORD=password
 
 ### Development Mode
 
-* With Docker and local MongoDB
+* With Docker
 
-**Start client, server and mongoDB simultaneously:**
+**Start client and server simultaneously:**
 ```bash
 make run
 ```
@@ -122,7 +123,7 @@ make restart
 make down
 ```
 
-* With Vite and Python
+* With Next.js and Python
 
 **Start both client and server simultaneously:**
 ```bash
@@ -238,8 +239,8 @@ Then set the following variables in the client and server `.env` files:
 
 In `client/.env`:
 ```env
-VITE_APP_DOMAIN_NAME=abstractgo.dev
-VITE_API_BASE_URL=https://${VITE_APP_DOMAIN_NAME}
+NEXT_PUBLICAPP_DOMAIN_NAME=abstractgo.dev
+NEXT_PUBLICAPI_BASE_URL=https://${NEXT_PUBLICAPP_DOMAIN_NAME}
 ```
 
 In `server/.env`:
@@ -256,23 +257,31 @@ abstractgo/
 ├── LICENSE
 ├── package.json              # Workspace manager (npm workspaces)
 ├── .env.example
-├── server/                   # Backend (Express + MongoDB + Socket.IO)
+├── server/                   # Backend (Python + FastAPI)
+│   ├── .env.example
 │   ├── Makefile
 │   ├── package.json
+│   ├── pyproject.toml
+│   ├── requirements.txt
 │   └── api/
-│       ├── main.py         # Main server file
-│       └── ????
-├── client/                   # Frontend (React + Vite)
+│       ├── __init__.py
+│       └── main.py         # Main server file
+├── client/                   # Frontend (React + Next.js)
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── components.json
 │   ├── Makefile
 │   ├── package.json
-│   ├── index.html
-│   └── src/
-│       ├── main.jsx          # React entry point
-│       ├── App.jsx           # Main App component
-│       ├── styles.css        # Global styles
-│       ├── ????
-│       ├── components/       # React components
-│       └── assets/           # Static assets
+│   ├── postcss.config.mjs
+│   ├── run-client.sh
+│   ├── tsconfig.json
+│   ├── app/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── pages/
+│   ├── public/
+│   └── styles/
 └── deploy/                   # Deployment configuration
     ├── docker-compose.yml
     └── nginx.conf

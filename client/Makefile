@@ -24,7 +24,7 @@ install:
 build:
 	bash ./run-client.sh build
 
-# Run in development mode with Vite
+# Run in development mode
 dev:
 	bash ./run-client.sh run
 
