@@ -85,9 +85,9 @@ Create `.env` files in the client and server directories:
 
 **Client `.env`:**
 ```bash
-NEXT_PUBLICAPP_DOMAIN_NAME=localhost
-NEXT_PUBLICAPI_BASE_URL=http://${NEXT_PUBLICAPP_DOMAIN_NAME}:8000
-NEXT_PUBLICDEBUG=0
+NEXT_PUBLIC_APP_DOMAIN_NAME=localhost
+NEXT_PUBLIC_API_BASE_URL=http://${NEXT_PUBLIC_APP_DOMAIN_NAME}:8000
+NEXT_PUBLIC_DEBUG=0
 ```
 
 **Server `.env`:**
@@ -239,8 +239,8 @@ Then set the following variables in the client and server `.env` files:
 
 In `client/.env`:
 ```env
-NEXT_PUBLICAPP_DOMAIN_NAME=abstractgo.dev
-NEXT_PUBLICAPI_BASE_URL=https://${NEXT_PUBLICAPP_DOMAIN_NAME}
+NEXT_PUBLIC_APP_DOMAIN_NAME=abstractgo.dev
+NEXT_PUBLIC_API_BASE_URL=https://${NEXT_PUBLIC_APP_DOMAIN_NAME}
 ```
 
 In `server/.env`:
