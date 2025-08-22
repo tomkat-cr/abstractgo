@@ -32,27 +32,37 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 ## Description
 
-AbstractGo is an AI/ML solution for medical investigation classification based on title and abstracts... ????
+AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a text-classification model (BioBERT with LoRA fine-tuning placed under `saved_models/biobert-lora/`) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: Cardiovascular, Neurological, Hepatorenal, and Oncological.
 
 ## Features
 
-????
+- **Model-powered classification**: FastAPI endpoint that scores input title+abstract with a Transformers pipeline (`text-classification`).
+- **Interactive dashboard**: Next.js UI with metrics, confusion matrix, category distributions, performance trends, and a demo component.
+- **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API.
+- **Local SSL support**: Make target creates self-signed certs for local HTTPS testing (`scripts/local_ssl_certs_creation.sh`).
+- **Monorepo workflow**: Root `Makefile` orchestrates client and server tasks; npm workspaces for script aggregation.
+- **Reproducible Python envs**: Managed with Poetry (`server/pyproject.toml`) and exportable `requirements.txt` for Docker.
 
 ## Technologies
 
 ### Backend
-- **Python** (≥3.11.0) - Runtime environment
-- **FastAPI** (0.104.1) - Web framework
-- **Socket.IO** (4.7.5) - Real-time communication ???
+- **Python** (≥3.11)
+- **FastAPI** (0.116.x)
+- **Transformers** (4.55.x) with a BioBERT tokenizer
+- **Uvicorn** (ASGI server)
+- **Poetry** (dependency and environment management)
 
 ### Frontend
-- **React** (18.2.0) - UI framework
-- **Next.js** (14.2.14) - Build tool and dev server
-- **Socket.IO Client** (4.7.5) - Real-time client ???
+- **React** (18)
+- **Next.js** (14)
+- **Tailwind CSS** (4)
+- **shadcn/ui & Radix UI** (components)
+- **Recharts** (visualizations)
 
 ### Development Tools
-- **Concurrently** (8.2.2) - Run multiple commands
-- **Make** - Build automation
+- **Docker + Nginx** (containerized deploy and reverse proxy)
+- **Make** (task runner in root, `client/`, and `server/`)
+- **npm workspaces** (aggregate scripts across packages)
 
 ## Getting Started
 
@@ -60,11 +70,11 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 Before running this project, make sure you have the following installed:
 
-- **Docker** (to run the server locally)
-- **Node.js** (version 18.0.0 or higher)
-- **Python** (version 3.11.0 or higher)
-- **Git** (to clone the repository)
-- **Make** (to run the Makefile)
+- [Docker](https://docs.docker.com/engine/install/) (to run the server locally)
+- [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) (better) or [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (version 18.0.0 or higher)
+- [Python](https://www.python.org/downloads/) (version 3.11.0 or higher)
+- [Git](https://git-scm.com/downloads) (to clone the repository)
+- Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) (to run the Makefile)
 
 ### Installation
 
@@ -219,7 +229,50 @@ make help          # Show available commands
 
 ### API Endpoints
 
-????
+Base URL depends on how you run the stack:
+
+- **Direct FastAPI (dev)**: `http://localhost:8000`
+- **Through Nginx (docker-compose)**: `http://localhost:3000/api`
+
+Endpoints:
+
+- **GET /** or **GET /api/** (health/root)
+  - Response: `{ "message": "Welcome to the Biomedical Classifier API" }`
+
+- **POST /predict** or **POST /api/predict**
+  - Body (JSON):
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "A randomized trial of beta-blockers in heart failure",
+    "abstract": "This study evaluates the efficacy of beta-blockers..."
+  }' \
+  http://localhost:8000/predict
+```
+  - Example via Nginx proxy:
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "A randomized trial of beta-blockers in heart failure",
+    "abstract": "This study evaluates the efficacy of beta-blockers..."
+  }' \
+  http://localhost:3000/api/predict
+```
+  - Response (array):
+```json
+[
+  { "label": "Cardiovascular", "score": 0.95 },
+  { "label": "Neurological", "score": 0.02 },
+  { "label": "Hepatorenal", "score": 0.01 },
+  { "label": "Oncological", "score": 0.02 }
+]
+```
+
+Notes:
+- The server concatenates `title + " " + abstract` and runs a Transformers `pipeline("text-classification", return_all_scores=true)` using the model under `saved_models/biobert-lora/`.
+- If the model is missing or fails to load, the API returns `500 Model not loaded`.
 
 
 ### Secure Server Configuration
@@ -270,7 +323,7 @@ abstractgo/
 │   ├── requirements.txt
 │   └── api/
 │       ├── __init__.py
-│       └── main.py         # Main server file
+│       └── main.py
 ├── client/                   # Frontend (React + Next.js)
 │   ├── .env.example
 │   ├── .gitignore
@@ -300,9 +353,9 @@ This project is a solution to the [AI Biomedical Classification Challenge](https
 
 ### Challenge Goal
 
-Your goal is to build an Artificial Intelligence solution to support the classification of medical literature.
+Build an Artificial Intelligence solution to support the classification of medical literature.
 
-Your objective will be to implement a system capable of assigning medical articles to one or more medical domains, using only the title and abstract as input. You can use traditional machine learning, language models, workflows with AI agents, or a hybrid approach, as long as you justify your choice and demonstrate its effectiveness.
+The goal will be to implement a system capable of assigning medical articles to one or more medical domains, using only the title and abstract as input. You can use traditional machine learning, language models, workflows with AI agents, or a hybrid approach, as long as you justify your choice and demonstrate its effectiveness.
 
 ### Dataset
 
