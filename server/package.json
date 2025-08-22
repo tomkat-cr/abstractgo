@@ -1,0 +1,12 @@
+{
+  "name": "abstractgo-server",
+  "type": "module",
+  "main": "api/main.py",
+  "scripts": {
+    "dev": "make dev",
+    "start": "make start",
+    "clean": "make clean",
+    "build": "make build",
+    "api:install": "make install && make build"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "abstractgo",
+  "version": "1.0.0",
+  "description": "An AI/ML solution for medical investigation classification based on title and abstracts.",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:*\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "build": "npm -w client run build:from_root",
+    "start": "npm -w server run start:from_root",
+    "install:all": "npm install && npm -w server run api:install && npm -w client install",
+    "clean": "npm -w server run clean && npm -w client run clean && rm -rf node_modules"
+  },
+  "keywords": [
+    "ai",
+    "ml",
+    "medical",
+    "investigation",
+    "classification",
+    "title",
+    "abstract",
+    "react",
+    "nodejs"
+  ],
+  "author": "Carlos J. Ramirez, Iver Johan Incapie, Alejandro Arroyave Perez",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
