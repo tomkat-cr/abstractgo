@@ -76,7 +76,7 @@ cd abstractgo
 
 2. **Install all dependencies (server and client)**
 ```bash
-npm install
+make install
 ```
 
 3. **Set up environment variables**
@@ -100,6 +100,11 @@ APP_NAME="AbstractGo"
 ORG_NAME="Melo-Dramatic Data Team"
 ADMIN_USERNAME=username
 ADMIN_PASSWORD=password
+```
+
+4. **Generate SSL certificates**
+```bash
+make ssl-certs-creation
 ```
 
 ## Usage
