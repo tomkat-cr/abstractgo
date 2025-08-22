@@ -21,6 +21,9 @@ eggs/
 lib/
 lib64/
 parts/
+# Allow client-side library folder
+!client/lib/
+!client/lib/**
 sdist/
 var/
 wheels/

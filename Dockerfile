@@ -1,20 +1,22 @@
-# Usar una imagen base oficial de Python
+# Dockerfile for AbstractGo API build
+# 2025-08-22 | CR
+
+# Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
-# Establecer el directorio de trabajo en el contenedor
+# Set the working directory in the container
 WORKDIR /code
 
-# Copiar el archivo de dependencias y luego instalar las dependencias
-# Esto aprovecha el cache de capas de Docker
-COPY server/requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-# Copiar los archivos de la aplicación y el modelo al contenedor
+# Copy the application files and model
 COPY server/api /code/api
 COPY saved_models /code/saved_models
 
-# Exponer el puerto en el que se ejecutará la aplicación
+# Copy the requirements file and install dependencies
+COPY server/requirements.txt /code/requirements.txt
+RUN cd /code/api && pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Expose the port on which the application will run
 EXPOSE 8000
 
-# Comando para ejecutar la aplicación usando uvicorn
+# Command to run the application using uvicorn
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

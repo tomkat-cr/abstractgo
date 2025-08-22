@@ -1,10 +1,10 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist } from "next/font/google"
+import { Inter } from "next/font/google"
 import { Manrope } from "next/font/google"
-import "./globals.css"
+import "@/styles/globals.css"
 
-const geist = Geist({
+const geist = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-geist",

@@ -2,13 +2,13 @@ services:
 
   abstractgo-server:
     container_name: abstractgo-server
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    working_dir: /code
-    command: sh -c "python api/main.py"
+    image: python:3.12-slim
+    command: sh -c "bash /code/server-entrypoint.sh"
     volumes:
       - ../server/api:/code/api
+      - ../server/requirements.txt:/code/requirements.txt
+      - ../saved_models:/code/saved_models
+      - ./server-entrypoint.sh:/code/server-entrypoint.sh
     environment:
       - PORT=${PORT}
       - CORS_ORIGIN=${CORS_ORIGIN}
