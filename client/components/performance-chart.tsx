@@ -1,203 +1,168 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
-import { useState } from "react"
-
-interface PerformanceData {
-  category: string
-  f1Score: number
-  precision: number
-  recall: number
-  support: number
-  trend: number
-  icon: any
-  color: string
-}
+import { LoadingError } from "@/components/ui/loading-error"
+import { usePerformance } from "@/hooks/api/useDashboard"
+import { BarChart3 } from "lucide-react"
 
 interface PerformanceChartProps {
-  data: PerformanceData[]
   className?: string
 }
 
-export function PerformanceChart({ data, className = "" }: PerformanceChartProps) {
-  const [selectedMetric, setSelectedMetric] = useState<"f1Score" | "precision" | "recall">("f1Score")
-  const [sortBy, setSortBy] = useState<"category" | "performance">("performance")
+export function PerformanceChart({ className = "" }: PerformanceChartProps) {
+  const { data: performance, loading, error, refetch } = usePerformance()
 
-  const sortedData = [...data].sort((a, b) => {
-    if (sortBy === "performance") {
-      return b[selectedMetric] - a[selectedMetric]
-    }
-    return a.category.localeCompare(b.category)
-  })
-
-  const getMetricLabel = (metric: string) => {
-    switch (metric) {
-      case "f1Score":
-        return "F1-Score"
-      case "precision":
-        return "Precision"
-      case "recall":
-        return "Recall"
-      default:
-        return metric
-    }
+  const getStatusColor = (accuracy: number) => {
+    if (accuracy >= 0.9) return "text-green-600"
+    if (accuracy >= 0.8) return "text-yellow-600"
+    return "text-red-600"
   }
 
-  const getTrendIcon = (trend: number) => {
-    if (trend > 0) return <TrendingUp className="h-3 w-3 text-green-600" />
-    if (trend < 0) return <TrendingDown className="h-3 w-3 text-red-600" />
-    return <Minus className="h-3 w-3 text-muted-foreground" />
+  const getStatusBadge = (accuracy: number) => {
+    if (accuracy >= 0.9) return "Excellent"
+    if (accuracy >= 0.8) return "Good"
+    return "Needs Improvement"
   }
 
-  const getTrendColor = (trend: number) => {
-    if (trend > 0) return "text-green-600"
-    if (trend < 0) return "text-red-600"
-    return "text-muted-foreground"
+  const getStatusBgColor = (accuracy: number) => {
+    if (accuracy >= 0.9) return "bg-green-100 text-green-800"
+    if (accuracy >= 0.8) return "bg-yellow-100 text-yellow-800"
+    return "bg-red-100 text-red-800"
   }
 
   return (
     <Card className={className}>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Performance by Category</CardTitle>
-            <CardDescription>Detailed metrics across medical categories</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={sortBy === "performance" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSortBy("performance")}
-            >
-              By Performance
-            </Button>
-            <Button
-              variant={sortBy === "category" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSortBy("category")}
-            >
-              Alphabetical
-            </Button>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          Category Performance
+        </CardTitle>
+        <CardDescription>
+          Detailed performance metrics by medical category
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as any)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="f1Score">F1-Score</TabsTrigger>
-            <TabsTrigger value="precision">Precision</TabsTrigger>
-            <TabsTrigger value="recall">Recall</TabsTrigger>
-          </TabsList>
+        <LoadingError
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="Loading performance data..."
+          errorTitle="Failed to load performance data"
+        >
+          {performance && (
+            <div className="space-y-6">
+              {performance.map((item, index) => (
+                <div key={index} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-lg">{item.category}</h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBgColor(item.accuracy)}`}>
+                      {getStatusBadge(item.accuracy)}
+                    </span>
+                  </div>
 
-          <TabsContent value={selectedMetric} className="space-y-4 mt-6">
-            {sortedData.map((item, index) => {
-              const IconComponent = item.icon
-              const metricValue = item[selectedMetric]
-              const maxValue = Math.max(...data.map((d) => d[selectedMetric]))
-              const isTopPerformer = metricValue === maxValue
-
-              return (
-                <div
-                  key={item.category}
-                  className={`flex items-center justify-between p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
-                    isTopPerformer ? "bg-accent/5 border-accent/30" : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${item.color}`}>
-                        <IconComponent className="h-4 w-4 text-white" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Accuracy */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Accuracy</span>
+                        <span className={`font-medium ${getStatusColor(item.accuracy)}`}>
+                          {(item.accuracy * 100).toFixed(1)}%
+                        </span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{item.category}</span>
-                          {isTopPerformer && (
-                            <Badge variant="secondary" className="text-xs bg-accent/20 text-accent">
-                              Best
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground">{item.support.toLocaleString()} samples</div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${getStatusColor(item.accuracy).replace('text-', 'bg-')}`}
+                          style={{ width: `${item.accuracy * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* F1 Score */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">F1 Score</span>
+                        <span className={`font-medium ${getStatusColor(item.f1_score)}`}>
+                          {(item.f1_score * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${getStatusColor(item.f1_score).replace('text-', 'bg-')}`}
+                          style={{ width: `${item.f1_score * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Precision */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Precision</span>
+                        <span className={`font-medium ${getStatusColor(item.precision)}`}>
+                          {(item.precision * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${getStatusColor(item.precision).replace('text-', 'bg-')}`}
+                          style={{ width: `${item.precision * 100}%` }}
+                        />
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6">
-                    {/* Performance Bar */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-32">
-                        <Progress value={metricValue * 100} className="h-3" />
-                      </div>
-                      <Badge variant="outline" className="min-w-[60px] justify-center font-mono">
-                        {(metricValue * 100).toFixed(1)}%
-                      </Badge>
+                  {/* Additional Metrics */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-primary">{item.total_predictions}</div>
+                      <div className="text-xs text-muted-foreground">Total Predictions</div>
                     </div>
-
-                    {/* Trend Indicator */}
-                    <div className="flex items-center gap-1 min-w-[60px]">
-                      {getTrendIcon(item.trend)}
-                      <span className={`text-xs font-medium ${getTrendColor(item.trend)}`}>
-                        {item.trend > 0 ? "+" : ""}
-                        {item.trend.toFixed(1)}%
-                      </span>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{item.correct_predictions}</div>
+                      <div className="text-xs text-muted-foreground">Correct</div>
                     </div>
-
-                    {/* Detailed Metrics */}
-                    <div className="text-xs text-muted-foreground space-y-1 min-w-[120px]">
-                      <div className="flex justify-between">
-                        <span>F1:</span>
-                        <span className="font-mono">{(item.f1Score * 100).toFixed(1)}%</span>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-red-600">
+                        {item.total_predictions - item.correct_predictions}
                       </div>
-                      <div className="flex justify-between">
-                        <span>Prec:</span>
-                        <span className="font-mono">{(item.precision * 100).toFixed(1)}%</span>
+                      <div className="text-xs text-muted-foreground">Incorrect</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {((item.correct_predictions / item.total_predictions) * 100).toFixed(1)}%
                       </div>
-                      <div className="flex justify-between">
-                        <span>Rec:</span>
-                        <span className="font-mono">{(item.recall * 100).toFixed(1)}%</span>
-                      </div>
+                      <div className="text-xs text-muted-foreground">Success Rate</div>
                     </div>
                   </div>
                 </div>
-              )
-            })}
-          </TabsContent>
-        </Tabs>
+              ))}
 
-        {/* Summary Statistics */}
-        <div className="mt-6 pt-4 border-t">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">
-                {((data.reduce((sum, item) => sum + item[selectedMetric], 0) / data.length) * 100).toFixed(1)}%
+              {/* Summary */}
+              <div className="pt-4 border-t">
+                <h4 className="font-medium mb-3">Performance Summary</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="text-lg font-bold text-green-600">
+                      {performance.filter(p => p.accuracy >= 0.9).length}
+                    </div>
+                    <div className="text-muted-foreground">Excellent Categories</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="text-lg font-bold text-yellow-600">
+                      {performance.filter(p => p.accuracy >= 0.8 && p.accuracy < 0.9).length}
+                    </div>
+                    <div className="text-muted-foreground">Good Categories</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <div className="text-lg font-bold text-red-600">
+                      {performance.filter(p => p.accuracy < 0.8).length}
+                    </div>
+                    <div className="text-muted-foreground">Needs Improvement</div>
+                  </div>
+                </div>
               </div>
-              <div className="text-muted-foreground">Avg {getMetricLabel(selectedMetric)}</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-accent">
-                {(Math.max(...data.map((item) => item[selectedMetric])) * 100).toFixed(1)}%
-              </div>
-              <div className="text-muted-foreground">Best {getMetricLabel(selectedMetric)}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-muted-foreground">
-                {(Math.min(...data.map((item) => item[selectedMetric])) * 100).toFixed(1)}%
-              </div>
-              <div className="text-muted-foreground">Lowest {getMetricLabel(selectedMetric)}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-secondary">
-                {data.reduce((sum, item) => sum + item.support, 0).toLocaleString()}
-              </div>
-              <div className="text-muted-foreground">Total Samples</div>
-            </div>
-          </div>
-        </div>
+          )}
+        </LoadingError>
       </CardContent>
     </Card>
   )

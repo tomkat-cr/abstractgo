@@ -1,205 +1,112 @@
 "use client"
 
-import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Activity, Brain, Heart, Microscope } from "lucide-react"
+import { LoadingError } from "@/components/ui/loading-error"
+import { useConfusionMatrix } from "@/hooks/api/useDashboard"
+import { Table } from "lucide-react"
 
 interface ConfusionMatrixProps {
-  matrix: number[][]
-  categories: string[]
   className?: string
 }
 
-export function ConfusionMatrix({ matrix, categories, className = "" }: ConfusionMatrixProps) {
-  const [hoveredCell, setHoveredCell] = useState<{ row: number; col: number } | null>(null)
-  const [selectedView, setSelectedView] = useState<"absolute" | "percentage">("absolute")
+export function ConfusionMatrix({ className = "" }: ConfusionMatrixProps) {
+  const { data: confusionMatrix, loading, error, refetch } = useConfusionMatrix()
 
-  const categoryIcons = [Heart, Brain, Activity, Microscope]
-  const categoryColors = ["text-red-500", "text-purple-500", "text-blue-500", "text-green-500"]
-
-  // Calculate totals for percentage view
-  const rowTotals = matrix.map((row) => row.reduce((sum, val) => sum + val, 0))
-  const maxValue = Math.max(...matrix.flat())
-
-  const getIntensity = (value: number, row: number) => {
-    if (selectedView === "percentage") {
-      const percentage = (value / rowTotals[row]) * 100
-      return percentage
-    }
-    return (value / maxValue) * 100
+  const getCellColor = (value: number, maxValue: number) => {
+    const intensity = value / maxValue
+    const alpha = 0.3 + intensity * 0.7 // Range from 0.3 to 1.0
+    return `rgba(59, 130, 246, ${alpha})` // Blue color with varying opacity
   }
 
-  const getCellValue = (value: number, row: number) => {
-    if (selectedView === "percentage") {
-      return ((value / rowTotals[row]) * 100).toFixed(1) + "%"
-    }
-    return value.toString()
+  const getMaxValue = () => {
+    if (!confusionMatrix?.matrix) return 1
+    return Math.max(...confusionMatrix.matrix.flat())
   }
 
-  const getAccuracy = (row: number) => {
-    return ((matrix[row][row] / rowTotals[row]) * 100).toFixed(1)
-  }
+  const maxValue = getMaxValue()
 
   return (
     <Card className={className}>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Confusion Matrix</CardTitle>
-            <CardDescription>Interactive classification accuracy heatmap</CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={selectedView === "absolute" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedView("absolute")}
-            >
-              Absolute
-            </Button>
-            <Button
-              variant={selectedView === "percentage" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedView("percentage")}
-            >
-              Percentage
-            </Button>
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Table className="h-5 w-5 text-primary" />
+          Confusion Matrix
+        </CardTitle>
+        <CardDescription>
+          Classification accuracy heatmap showing true vs predicted categories
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Matrix Grid */}
-        <div className="space-y-4">
-          {/* Column Headers */}
-          <div className="grid grid-cols-5 gap-2 text-xs font-medium">
-            <div></div>
-            {categories.map((category, index) => {
-              const IconComponent = categoryIcons[index]
-              return (
-                <div key={index} className="text-center space-y-1">
-                  <IconComponent className={`h-4 w-4 mx-auto ${categoryColors[index]}`} />
-                  <div className="truncate">{category}</div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Matrix Rows */}
-          {matrix.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-5 gap-2 items-center">
-              {/* Row Header */}
-              <div className="text-xs font-medium text-right space-y-1">
-                <div className="flex items-center justify-end gap-1">
-                  {(() => {
-                    const IconComponent = categoryIcons[rowIndex]
-                    return <IconComponent className={`h-3 w-3 ${categoryColors[rowIndex]}`} />
-                  })()}
-                  <span className="truncate">{categories[rowIndex]}</span>
-                </div>
-                <Badge variant="secondary" className="text-xs">
-                  {getAccuracy(rowIndex)}% acc
-                </Badge>
+      <CardContent>
+        <LoadingError
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="Loading confusion matrix..."
+          errorTitle="Failed to load confusion matrix"
+        >
+          {confusionMatrix && (
+            <div className="space-y-4">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="p-2 text-left font-medium text-muted-foreground">
+                        Actual ↓ / Predicted →
+                      </th>
+                      {confusionMatrix.categories.map((category, index) => (
+                        <th key={index} className="p-2 text-center font-medium text-sm">
+                          {category}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {confusionMatrix.matrix.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        <td className="p-2 font-medium text-sm text-muted-foreground">
+                          {confusionMatrix.categories[rowIndex]}
+                        </td>
+                        {row.map((value, colIndex) => (
+                          <td
+                            key={colIndex}
+                            className="p-2 text-center text-sm font-medium border"
+                            style={{
+                              backgroundColor: getCellColor(value, maxValue),
+                              color: value > maxValue / 2 ? 'white' : 'black',
+                            }}
+                          >
+                            {value}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              {/* Matrix Cells */}
-              {row.map((value, colIndex) => {
-                const intensity = getIntensity(value, rowIndex)
-                const isCorrect = rowIndex === colIndex
-                const isHovered = hoveredCell?.row === rowIndex && hoveredCell?.col === colIndex
-
-                return (
-                  <div
-                    key={colIndex}
-                    className={`
-                      relative aspect-square flex items-center justify-center rounded-lg text-xs font-semibold
-                      cursor-pointer transition-all duration-200 border-2
-                      ${isHovered ? "scale-110 z-10 shadow-lg" : ""}
-                      ${isCorrect ? "border-accent/50" : "border-transparent"}
-                    `}
-                    style={{
-                      backgroundColor: isCorrect
-                        ? `hsl(var(--accent) / ${Math.max(intensity / 100, 0.2)})`
-                        : `hsl(var(--destructive) / ${Math.max(intensity / 100, 0.1)})`,
-                      color: intensity > 50 ? "white" : "hsl(var(--foreground))",
-                    }}
-                    onMouseEnter={() => setHoveredCell({ row: rowIndex, col: colIndex })}
-                    onMouseLeave={() => setHoveredCell(null)}
-                  >
-                    {getCellValue(value, rowIndex)}
-
-                    {/* Tooltip */}
-                    {isHovered && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-popover border rounded-lg shadow-lg text-popover-foreground z-20 whitespace-nowrap">
-                        <div className="text-sm font-medium">
-                          {categories[rowIndex]} → {categories[colIndex]}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Count: {value} | Percentage: {((value / rowTotals[rowIndex]) * 100).toFixed(1)}%
-                        </div>
-                        {isCorrect && <div className="text-xs text-accent font-medium">✓ Correct Classification</div>}
-                      </div>
-                    )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <h4 className="font-medium mb-2">Summary</h4>
+                  <div className="space-y-1 text-muted-foreground">
+                    <div>Total Predictions: {confusionMatrix.total_predictions}</div>
+                    <div>Categories: {confusionMatrix.categories.length}</div>
                   </div>
-                )
-              })}
-            </div>
-          ))}
-        </div>
-
-        {/* Legend and Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-          <div>
-            <h4 className="text-sm font-medium mb-2">Legend</h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-accent/80"></div>
-                <span>Correct Classifications (Diagonal)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-destructive/30"></div>
-                <span>Misclassifications (Off-diagonal)</span>
-              </div>
-              <div className="text-muted-foreground">
-                Intensity represents {selectedView === "absolute" ? "absolute count" : "percentage of row total"}
+                </div>
+                <div>
+                  <h4 className="font-medium mb-2">Accuracy by Category</h4>
+                  <div className="space-y-1">
+                    {Object.entries(confusionMatrix.accuracy_per_category).map(([category, accuracy]) => (
+                      <div key={category} className="flex justify-between">
+                        <span className="text-muted-foreground">{category}:</span>
+                        <span className="font-medium">{(accuracy * 100).toFixed(1)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-medium mb-2">Overall Statistics</h4>
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span>Total Predictions:</span>
-                <span className="font-medium">{rowTotals.reduce((sum, val) => sum + val, 0).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Overall Accuracy:</span>
-                <span className="font-medium text-accent">
-                  {(
-                    (matrix.reduce((sum, row, i) => sum + row[i], 0) / rowTotals.reduce((sum, val) => sum + val, 0)) *
-                    100
-                  ).toFixed(1)}
-                  %
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Best Category:</span>
-                <span className="font-medium">
-                  {
-                    categories[
-                      rowTotals.findIndex(
-                        (_, i) =>
-                          Number.parseFloat(getAccuracy(i)) ===
-                          Math.max(...rowTotals.map((_, j) => Number.parseFloat(getAccuracy(j)))),
-                      )
-                    ]
-                  }
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+          )}
+        </LoadingError>
       </CardContent>
     </Card>
   )
