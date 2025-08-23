@@ -2,6 +2,15 @@
 
 This project provides a machine learning solution for classifying medical articles into different categories using transformer-based models. The system consists of two main components: a training module and a testing module.
 
+## Pre-requist
+Since these notebooks are run and trained in Google Colab, the following recommendations should be considered:
+
+1. Use a GPU session, as it dramatically improves the training process.
+2. The training files are located in data/raw/challenge_data.csv which must be uploaded to Google Colab
+3. The entire workflow should be run exactly as it appears in the notebooks
+In the line for publishing the model to the hub, you must have a token, which only the space owner can provide
+
+
 ## 📖 Usage
 
 ### Training Model
