@@ -17,26 +17,26 @@ help:
 
 # Start all services
 up:
-	bash run-server.sh run
+	bash run-deploy.sh run
 
 # Stop all services
 down:
-	bash run-server.sh down
+	bash run-deploy.sh down
 
 # Restart all services
 restart-docker:
-	bash run-server.sh restart
+	bash run-deploy.sh restart
 
 # Restart all services
 restart: restart-docker logs-f
 	
 # Show logs
 logs:
-	docker compose logs
+	bash run-deploy.sh logs
 
 # Follow logs
 logs-f:
-	docker compose logs -f
+	bash run-deploy.sh logs-f
 
 # Build client and start services
 build:
