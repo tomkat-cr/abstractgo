@@ -18,7 +18,7 @@ down:
 
 # Restart all services
 restart:
-	make build && cd deploy && make restart
+	cd deploy && make restart
 
 # Restart all services
 hard-restart:
