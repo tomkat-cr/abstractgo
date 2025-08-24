@@ -240,6 +240,7 @@ Endpoints:
   - Response: `{ "message": "Welcome to the Biomedical Classifier API" }`
 
 - **POST /predict** or **POST /api/predict**
+
   - Body (JSON):
 ```bash
 curl -X POST \

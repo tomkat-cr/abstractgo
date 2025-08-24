@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   // Classification endpoints
   CLASSIFICATION: {
     PREDICT: '/predict',
+    PDF_READ: '/pdfread',
     BATCH_PREDICT: '/predict/batch',
     HISTORY: '/classification/history',
   },
