@@ -3,7 +3,7 @@ import os
 from .json_models import get_all_training_metrics
 
 
-class StaticDashboardMetrics:
+class BaseDashboardMetrics:
     def __init__(self):
         self.debug = os.environ.get("SERVER_DEBUG", "0") == "1"
         self.metrics = get_all_training_metrics()
@@ -14,6 +14,11 @@ class StaticDashboardMetrics:
 
     def get_confusion_matrix(self):
         return self.cm
+
+
+class StaticDashboardMetrics(BaseDashboardMetrics):
+    def __init__(self):
+        super().__init__()
 
     def get_precision(self):
         return {label: value for label, value in zip(self.cm.keys(), [

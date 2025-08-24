@@ -18,7 +18,7 @@ from .utilities import (
     get_temp_random_file_path
 )
 from .dashboard_metrics import StaticDashboardMetrics
-from .dashboard_metrics_from_db import DynamicDashboardMetrics
+from .dashboard_metrics_from_db import DashboardMetricsFromDb
 
 
 PDFREAD_USE_URL = os.environ.get("PDFREAD_USE_URL", "0") == "1"
@@ -42,7 +42,7 @@ ai_model_params = {}
 ai_model = AIModels(params=ai_model_params)
 
 dashboard_metrics_handler = StaticDashboardMetrics()
-dashboard_metrics_handler_from_db = DynamicDashboardMetrics()
+dashboard_metrics_from_db_handler = DashboardMetricsFromDb()
 
 
 @app.get("/")
@@ -329,7 +329,7 @@ def dashboard_analytics():
     """
     Dashboard analytics endpoint.
     """
-    return dashboard_metrics_handler_from_db \
+    return dashboard_metrics_from_db_handler \
         .get_dashboard_analytics()
 
 
@@ -338,5 +338,5 @@ def dashboard_classification_history():
     """
     Dashboard classification history endpoint.
     """
-    return dashboard_metrics_handler_from_db \
+    return dashboard_metrics_from_db_handler \
         .get_dashboard_classification_history()

@@ -1,12 +1,9 @@
-import os
-
-from .json_models import get_all_training_metrics
+from .dashboard_metrics import BaseDashboardMetrics
 
 
-class DynamicDashboardMetrics:
+class DashboardMetricsFromDb(BaseDashboardMetrics):
     def __init__(self):
-        self.debug = os.environ.get("SERVER_DEBUG", "0") == "1"
-        self.metrics = get_all_training_metrics()
+        super().__init__()
 
     def get_dashboard_analytics(self):
         """
@@ -30,9 +27,8 @@ class DynamicDashboardMetrics:
         """
         Get the dashboard classification history.
         """
-        result = []
-        for item in self.metrics["classification_history"]:
-            result.append({
+        return [
+            {
                 "id": item["id"],
                 "title": item["title"],
                 "abstract": item["abstract"],
@@ -41,5 +37,6 @@ class DynamicDashboardMetrics:
                 "date": item["date"],
                 "processing_time": item["processing_time"],
                 "status": item["status"],
-            })
-        return result
+            }
+            for item in self.metrics["classification_history"]
+        ]
