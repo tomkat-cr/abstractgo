@@ -19,16 +19,81 @@ import {
   CheckCircle, 
   AlertCircle,
   RefreshCw,
-  Download
+  Download,
+  Activity,
+  Heart,
+  Droplets,
+  AlertTriangle
 } from "lucide-react"
+import { ClassificationResponse } from "@/services/types/classification"
 
 interface ClassificationDemoProps {
   className?: string
 }
 
+// Function to calculate confidence level based on scores
+function calculateConfidenceLevel(result: ClassificationResponse): {
+  level: 'high' | 'medium' | 'low';
+  label: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  icon: React.ReactNode;
+} {
+  if (!result.all_predictions || result.all_predictions.length === 0) {
+    return {
+      level: 'low',
+      label: 'Low Confidence',
+      color: 'text-red-700',
+      bgColor: 'bg-red-50',
+      borderColor: 'border-red-200',
+      icon: <AlertTriangle className="h-3 w-3 mr-1" />
+    }
+  }
+
+  const sortedPredictions = [...result.all_predictions].sort((a, b) => b.score - a.score)
+  const primaryScore = sortedPredictions[0].score
+  const secondaryScore = sortedPredictions[1]?.score || 0
+  const scoreDifference = primaryScore - secondaryScore
+
+  // High confidence: primary score > 0.7 and difference > 0.3
+  if (primaryScore > 0.7 && scoreDifference > 0.3) {
+    return {
+      level: 'high',
+      label: 'High Confidence',
+      color: 'text-green-700',
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200',
+      icon: <CheckCircle className="h-3 w-3 mr-1" />
+    }
+  }
+  
+  // Medium confidence: primary score > 0.5 and difference > 0.15
+  if (primaryScore > 0.5 && scoreDifference > 0.15) {
+    return {
+      level: 'medium',
+      label: 'Medium Confidence',
+      color: 'text-yellow-700',
+      bgColor: 'bg-yellow-50',
+      borderColor: 'border-yellow-200',
+      icon: <AlertTriangle className="h-3 w-3 mr-1" />
+    }
+  }
+  
+  // Low confidence: everything else
+  return {
+    level: 'low',
+    label: 'Low Confidence',
+    color: 'text-red-700',
+    bgColor: 'bg-red-50',
+    borderColor: 'border-red-200',
+    icon: <AlertTriangle className="h-3 w-3 mr-1" />
+  }
+}
+
 export function ClassificationDemo({ className = "" }: ClassificationDemoProps) {
   const [activeTab, setActiveTab] = useState("text")
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   
   const {
     input,
@@ -69,19 +134,39 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
     }
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (file) {
+      setSelectedFile(file)
+      handleFileUpload(file)
+    }
+  }
+
+  const handleFileUpload = async (file: File) => {
+    console.log('File selected:', file.name, file.type, file.size)
 
     try {
-      await uploadPDF(file)
+      const extractedData = await uploadPDF(file)
+      console.log('PDF extraction result:', extractedData)
+      
+      // Automatically classify the extracted content
+      if (extractedData && extractedData.title && extractedData.abstract) {
+        console.log('Extraction successful, starting classification...')
+        await predict({
+          title: extractedData.title,
+          abstract: extractedData.abstract,
+        })
+      } else {
+        console.log('Extraction failed - missing title or abstract:', extractedData)
+      }
     } catch (error) {
+      console.error('Error in handleFileUpload:', error)
       // Error is handled by the hook
     }
   }
 
   const handlePDFExtractAndClassify = async () => {
-    if (!extractedData?.success) return
+    if (!extractedData?.title || !extractedData?.abstract) return
 
     try {
       await predict({
@@ -97,9 +182,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
     resetClassification()
     resetPDF()
     setFormData({ title: "", abstract: "" })
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
+    setSelectedFile(null)
   }
 
   const getCategoryColor = (category: string) => {
@@ -130,255 +213,390 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="text">Text Input</TabsTrigger>
-            <TabsTrigger value="pdf">PDF Upload</TabsTrigger>
-          </TabsList>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Input Section */}
+          <div className="space-y-4">
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="text">Text Input</TabsTrigger>
+                <TabsTrigger value="pdf">PDF Upload</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-          <TabsContent value="text" className="space-y-6">
-            {/* Text Input Form */}
-            <form onSubmit={handleTextSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Article Title</Label>
-                <Input
-                  id="title"
-                  placeholder="Enter the article title..."
-                  value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  maxLength={500}
-                  disabled={classificationLoading}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {formData.title.length}/500 characters
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="abstract">Abstract</Label>
-                <Textarea
-                  id="abstract"
-                  placeholder="Enter the article abstract..."
-                  value={formData.abstract}
-                  onChange={(e) => setFormData(prev => ({ ...prev, abstract: e.target.value }))}
-                  rows={6}
-                  maxLength={5000}
-                  disabled={classificationLoading}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {formData.abstract.length}/5000 characters
-                </p>
-              </div>
-
-              <div className="flex gap-2">
-                <Button 
-                  type="submit" 
-                  disabled={classificationLoading || !formData.title.trim() || !formData.abstract.trim()}
-                  className="flex items-center gap-2"
-                >
-                  {classificationLoading ? (
-                    <LoadingSpinner size="sm" />
-                  ) : (
-                    <Zap className="h-4 w-4" />
-                  )}
-                  Classify Article
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={resetAll}
-                  disabled={classificationLoading}
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Reset
-                </Button>
-              </div>
-            </form>
-
-            {/* Error Display */}
-            {classificationError && (
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <span className="text-sm text-red-600">{classificationError}</span>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearClassificationError}
-                  className="ml-auto h-6 px-2"
-                >
-                  ×
-                </Button>
-              </div>
-            )}
-
-            {/* Results Display */}
-            {result && (
-              <Card className="border-green-200 bg-green-50">
-                <CardHeader className="pb-3">
+            {/* Text Input Card */}
+            {activeTab === "text" && (
+              <Card className="p-6">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    Classification Result
+                    <FileText className="h-5 w-5 text-blue-600" />
+                    Text Input
                   </CardTitle>
+                  <CardDescription>
+                    Enter the title and abstract of your medical article for classification
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Category:</span>
-                    <Badge className={getCategoryColor(result.category)}>
-                      {result.category}
-                    </Badge>
+                  <form onSubmit={handleTextSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Article Title</Label>
+                      <Input
+                        id="title"
+                        placeholder="Enter the article title..."
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        maxLength={500}
+                        disabled={classificationLoading}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {formData.title.length}/500 characters
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="abstract">Abstract</Label>
+                      <Textarea
+                        id="abstract"
+                        placeholder="Enter the article abstract..."
+                        value={formData.abstract}
+                        onChange={(e) => setFormData(prev => ({ ...prev, abstract: e.target.value }))}
+                        rows={6}
+                        maxLength={5000}
+                        disabled={classificationLoading}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {formData.abstract.length}/5000 characters
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button 
+                        type="submit" 
+                        disabled={classificationLoading || !formData.title.trim() || !formData.abstract.trim()}
+                        className="flex items-center gap-2"
+                      >
+                        {classificationLoading ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          <Brain className="h-4 w-4" />
+                        )}
+                        Classify Article
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={resetAll}
+                        disabled={classificationLoading}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </form>
+
+                  {/* Error Display */}
+                  {classificationError && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <span className="text-sm text-red-600">{classificationError}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearClassificationError}
+                        className="ml-auto h-6 px-2"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* PDF Upload Card */}
+            {activeTab === "pdf" && (
+              <Card className="p-6">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Upload className="h-5 w-5 text-blue-600" />
+                    PDF Upload
+                  </CardTitle>
+                  <CardDescription>
+                    Upload a PDF file to extract title and abstract for classification
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="pdf-upload">Upload PDF Article</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="pdf-upload"
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileSelect}
+                        disabled={pdfLoading}
+                        className="flex-1"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Maximum file size: 10MB. Only PDF files are supported.
+                    </p>
+                    {selectedFile && (
+                      <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm text-green-700">
+                          Selected: {selectedFile.name}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Confidence:</span>
-                    <span className={`font-bold ${getConfidenceColor(result.confidence)}`}>
-                      {(result.confidence * 100).toFixed(1)}%
-                    </span>
+
+                  {/* Error Display */}
+                  {pdfError && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <span className="text-sm text-red-600">{pdfError}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={clearPDFError}
+                        className="ml-auto h-6 px-2"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* PDF Loading */}
+                  {pdfLoading && (
+                    <div className="flex items-center justify-center p-8">
+                      <LoadingSpinner text="Extracting text from PDF..." />
+                    </div>
+                  )}
+
+                  {/* Extracted Data Display */}
+                  {extractedData && extractedData.title && extractedData.abstract && (
+                    <Card className="border-blue-200 bg-blue-50">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-blue-600" />
+                          Extracted Content
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <Label className="font-medium">Title:</Label>
+                          <p className="text-sm bg-white p-2 rounded border">
+                            {extractedData.title}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label className="font-medium">Abstract:</Label>
+                          <p className="text-sm bg-white p-2 rounded border max-h-32 overflow-y-auto">
+                            {extractedData.abstract}
+                          </p>
+                        </div>
+
+                        <Button 
+                          onClick={handlePDFExtractAndClassify}
+                          disabled={classificationLoading}
+                          className="w-full flex items-center gap-2"
+                        >
+                          {classificationLoading ? (
+                            <LoadingSpinner size="sm" />
+                          ) : (
+                            <Brain className="h-4 w-4" />
+                          )}
+                          Classify Extracted Content
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Right Column - Results Display */}
+          <div className="lg:sticky lg:top-6">
+            {result ? (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+                <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                      <Brain className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                        Classification Results
+                      </CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-gray-300">
+                        AI confidence scores and category predictions
+                      </CardDescription>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Processing Time:</span>
-                    <span className="flex items-center gap-1 text-muted-foreground">
+                </CardHeader>
+                
+                <CardContent className="pt-6 space-y-6">
+                  {/* Processing Info */}
+                  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      {result.processing_time}ms
-                    </span>
+                      <span>Processed at {new Date(result.timestamp || Date.now()).toLocaleTimeString()}</span>
+                    </div>
+                    {(() => {
+                      const confidenceInfo = calculateConfidenceLevel(result)
+                      return (
+                        <Badge 
+                          variant="outline" 
+                          className={`${confidenceInfo.borderColor} ${confidenceInfo.color} ${confidenceInfo.bgColor} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
+                        >
+                          {confidenceInfo.icon}
+                          {confidenceInfo.label}
+                        </Badge>
+                      )
+                    })()}
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Model Version:</span>
-                    <span className="text-sm text-muted-foreground">{result.model_version}</span>
+
+                  {/* Category Predictions */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-lg">Category Predictions</h3>
+                    
+                    {result.all_predictions && result.all_predictions.length > 0 && (
+                      <div className="space-y-3">
+                        {result.all_predictions
+                          .sort((a, b) => b.score - a.score) // Sort by confidence descending
+                          .map((prediction, index) => {
+                            const isPrimary = index === 0;
+                            const percentage = (prediction.score * 100).toFixed(1);
+                            
+                            return (
+                              <div 
+                                key={prediction.label}
+                                className={`p-4 rounded-lg border transition-all ${
+                                  isPrimary 
+                                    ? 'bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200 shadow-sm dark:from-purple-900/20 dark:to-purple-800/20 dark:border-purple-700' 
+                                    : 'bg-white border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-full ${
+                                      prediction.label === 'neurological' ? 'bg-purple-100 dark:bg-purple-900' :
+                                      prediction.label === 'oncological' ? 'bg-green-100 dark:bg-green-900' :
+                                      prediction.label === 'cardiovascular' ? 'bg-red-100 dark:bg-red-900' :
+                                      'bg-blue-100 dark:bg-blue-900'
+                                    }`}>
+                                      {prediction.label === 'neurological' ? (
+                                        <Brain className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                                      ) : prediction.label === 'oncological' ? (
+                                        <Activity className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                      ) : prediction.label === 'cardiovascular' ? (
+                                        <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                      ) : (
+                                        <Droplets className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                      )}
+                                    </div>
+                                    <div>
+                                      <span className="font-medium text-gray-900 dark:text-white capitalize">
+                                        {prediction.label}
+                                      </span>
+                                      {isPrimary && (
+                                        <Badge className="ml-2 bg-green-100 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700">
+                                          Primary
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <span className={`font-bold text-lg ${
+                                    isPrimary ? 'text-purple-700 dark:text-purple-300' : 'text-gray-700 dark:text-gray-300'
+                                  }`}>
+                                    {percentage}%
+                                  </span>
+                                </div>
+                                
+                                {/* Progress Bar */}
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                  <div 
+                                    className={`h-2 rounded-full transition-all duration-500 ${
+                                      isPrimary ? 'bg-purple-600 dark:bg-purple-400' : 'bg-gray-400 dark:bg-gray-500'
+                                    }`}
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Additional Details */}
+                  <div className="pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
+                    {result.processing_time && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-300 font-medium">Processing Time:</span>
+                        <span className="text-gray-900 dark:text-white font-semibold">
+                          {(result.processing_time / 1000).toFixed(2)}s
+                        </span>
+                      </div>
+                    )}
+                    
+                    {result.model_version && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-300 font-medium">Model Version:</span>
+                        <span className="text-gray-900 dark:text-white font-semibold">{result.model_version}</span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-300 font-medium">Classification ID:</span>
+                      <span className="text-gray-900 dark:text-white font-semibold">
+                        #{Date.now().toString().slice(-12)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+                <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                      <Activity className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                        Classification Results
+                      </CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-gray-300">
+                        AI confidence scores and category predictions
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="pt-12 pb-12">
+                  <div className="flex flex-col items-center justify-center text-center space-y-4">
+                    <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-700">
+                      <Brain className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Ready for Classification
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 max-w-sm">
+                        Enter article details or upload a PDF and click 'Classify Article'
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
-
-          <TabsContent value="pdf" className="space-y-6">
-            {/* PDF Upload Section */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="pdf-upload">Upload PDF Article</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="pdf-upload"
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileUpload}
-                    ref={fileInputRef}
-                    disabled={pdfLoading}
-                  />
-                  <Button 
-                    variant="outline" 
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={pdfLoading}
-                  >
-                    <Upload className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Maximum file size: 10MB. Only PDF files are supported.
-                </p>
-              </div>
-
-              {/* Error Display */}
-              {pdfError && (
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-600">{pdfError}</span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearPDFError}
-                    className="ml-auto h-6 px-2"
-                  >
-                    ×
-                  </Button>
-                </div>
-              )}
-
-              {/* PDF Loading */}
-              {pdfLoading && (
-                <div className="flex items-center justify-center p-8">
-                  <LoadingSpinner text="Extracting text from PDF..." />
-                </div>
-              )}
-
-              {/* Extracted Data Display */}
-              {extractedData && extractedData.success && (
-                <Card className="border-blue-200 bg-blue-50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-600" />
-                      Extracted Content
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="font-medium">Title:</Label>
-                      <p className="text-sm bg-white p-2 rounded border">
-                        {extractedData.title}
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="font-medium">Abstract:</Label>
-                      <p className="text-sm bg-white p-2 rounded border max-h-32 overflow-y-auto">
-                        {extractedData.abstract}
-                      </p>
-                    </div>
-
-                    <Button 
-                      onClick={handlePDFExtractAndClassify}
-                      disabled={classificationLoading}
-                      className="w-full flex items-center gap-2"
-                    >
-                      {classificationLoading ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        <Brain className="h-4 w-4" />
-                      )}
-                      Classify Extracted Content
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Classification Results from PDF */}
-              {result && activeTab === "pdf" && (
-                <Card className="border-green-200 bg-green-50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      Classification Result
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">Category:</span>
-                      <Badge className={getCategoryColor(result.category)}>
-                        {result.category}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">Confidence:</span>
-                      <span className={`font-bold ${getConfidenceColor(result.confidence)}`}>
-                        {(result.confidence * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">Processing Time:</span>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        {result.processing_time}ms
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
+        <div className="h-8"></div> {/* Bottom spacing */}
+      </CardContent>
 
         {/* Reset All Button */}
         <div className="pt-4 border-t">
@@ -392,7 +610,6 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
             Reset All
           </Button>
         </div>
-      </CardContent>
     </Card>
   )
 }

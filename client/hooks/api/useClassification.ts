@@ -39,10 +39,25 @@ export const useClassification = () => {
       return result
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to predict classification'
+      
+      // Create a fallback result with zero values when there's an error
+      const fallbackResult: ClassificationResponse = {
+        category: 'unknown',
+        confidence: 0,
+        all_predictions: [
+          { label: 'neurological', score: 0 },
+          { label: 'hepatorenal', score: 0 },
+          { label: 'cardiovascular', score: 0 },
+          { label: 'oncological', score: 0 },
+        ],
+        timestamp: new Date().toISOString(),
+      }
+      
       setData(prev => ({
         ...prev,
         loading: false,
         error: errorMessage,
+        result: fallbackResult, // Show fallback result even when there's an error
       }))
       throw error
     }
@@ -80,15 +95,18 @@ export const usePDFUpload = () => {
 
   const uploadPDF = useCallback(async (file: File) => {
     try {
+      console.log('usePDFUpload: Starting upload for file:', file.name)
       setData(prev => ({ ...prev, loading: true, error: null }))
       
       // Validate file
       const validation = classificationService.validatePDFFile(file)
+      console.log('usePDFUpload: Validation result:', validation)
       if (!validation.valid) {
         throw new Error(validation.errors.join(', '))
       }
 
       const result = await classificationService.uploadPDFAndExtract(file)
+      console.log('usePDFUpload: Service result:', result)
       
       setData({
         file,
@@ -96,9 +114,11 @@ export const usePDFUpload = () => {
         loading: false,
         error: null,
       })
+      console.log('usePDFUpload: State updated with extracted data')
 
       return result
     } catch (error) {
+      console.error('usePDFUpload: Error occurred:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload PDF'
       setData(prev => ({
         ...prev,
