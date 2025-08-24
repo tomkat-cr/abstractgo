@@ -171,28 +171,20 @@ export const useDistribution = () => {
 
   const fetchDistribution = useCallback(async () => {
     try {
-      console.log('🔍 useDistribution: Starting fetch...')
       setLoading(true)
       setError(null)
       const distribution = await dashboardService.getDistribution()
-      console.log('🔍 useDistribution: Received data:', distribution)
-      console.log('🔍 useDistribution: Data length:', distribution?.length)
       setData(distribution)
     } catch (error) {
-      console.error('🔍 useDistribution: Error occurred:', error)
       setError(error instanceof Error ? error.message : 'Failed to fetch distribution data')
     } finally {
-      console.log('🔍 useDistribution: Setting loading to false')
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    console.log('🔍 useDistribution: useEffect triggered')
     fetchDistribution()
   }, [fetchDistribution])
-
-  console.log('🔍 useDistribution: Current state:', { data, loading, error })
 
   return { data, loading, error, refetch: fetchDistribution }
 }
@@ -204,28 +196,20 @@ export const useAnalytics = () => {
 
   const fetchAnalytics = useCallback(async () => {
     try {
-      console.log('🔍 useAnalytics: Starting fetch...')
       setLoading(true)
       setError(null)
       const analytics = await dashboardService.getAnalytics()
-      console.log('🔍 useAnalytics: Received data:', analytics)
-      console.log('🔍 useAnalytics: Daily classifications length:', analytics?.daily_classifications?.length)
       setData(analytics)
     } catch (error) {
-      console.error('🔍 useAnalytics: Error occurred:', error)
       setError(error instanceof Error ? error.message : 'Failed to fetch analytics data')
     } finally {
-      console.log('🔍 useAnalytics: Setting loading to false')
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    console.log('🔍 useAnalytics: useEffect triggered')
     fetchAnalytics()
   }, [fetchAnalytics])
-
-  console.log('🔍 useAnalytics: Current state:', { data, loading, error })
 
   return { data, loading, error, refetch: fetchAnalytics }
 }

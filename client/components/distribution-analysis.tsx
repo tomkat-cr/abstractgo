@@ -12,15 +12,30 @@ interface DistributionAnalysisProps {
 export function DistributionAnalysis({ className = "" }: DistributionAnalysisProps) {
   const { data: distribution, loading, error, refetch } = useDistribution()
 
-  // Debug logs para Distribution Analysis
-  console.log('🔍 DistributionAnalysis Debug:', {
-    distribution,
-    loading,
-    error,
-    hasData: !!distribution,
-    distributionLength: distribution?.length,
-    firstItem: distribution?.[0]
-  })
+  if (loading) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Distribution Analysis
+          </CardTitle>
+          <CardDescription>
+            Dataset composition and category distribution trends
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LoadingError
+            loading={loading}
+            error={error}
+            onRetry={refetch}
+            loadingText="Loading distribution data..."
+            errorTitle="Failed to load distribution data"
+          />
+        </CardContent>
+      </Card>
+    )
+  }
 
   const getCategoryColor = (index: number) => {
     const colors = [
