@@ -12,10 +12,11 @@ from .ml_models import MLModels
 from .json_models import get_all_training_metrics
 from .types import Metrics, Prediction, Article
 from .utilities import (
-    remove_temp_file,
     SERVER_DEBUG as DEBUG,
+    remove_temp_file,
     get_temp_random_file_path
 )
+from .dashboard_metrics import DashboardMetrics
 
 
 PDFREAD_USE_URL = os.environ.get("PDFREAD_USE_URL", "0") == "1"
@@ -269,3 +270,59 @@ def get_assets(
             detail=f"File not found: {file_path}"
         )
     return FileResponse(file_path)
+
+
+@app.get("/health")
+def health():
+    """
+    Health check endpoint.
+    """
+    return {"status": "ok"}
+
+
+@app.get("/dashboard/metrics")
+def dashboard_metrics():
+    """
+    Dashboard metrics endpoint.
+    """
+    return DashboardMetrics().get_dashboard_metrics()
+
+
+@app.get("/dashboard/confusion-matrix")
+def dashboard_confusion_matrix():
+    """
+    Dashboard confusion matrix endpoint.
+    """
+    return DashboardMetrics().get_dashboard_confusion_matrix()
+
+
+@app.get("/dashboard/performance")
+def dashboard_performance():
+    """
+    Dashboard performance endpoint.
+    """
+    return DashboardMetrics().get_dashboard_performance()
+
+
+@app.get("/dashboard/distribution")
+def dashboard_distribution():
+    """
+    Dashboard distribution endpoint.
+    """
+    return DashboardMetrics().get_dashboard_distribution()
+
+
+@app.get("/dashboard/analytics")
+def dashboard_analytics():
+    """
+    Dashboard analytics endpoint.
+    """
+    return DashboardMetrics().get_dashboard_analytics()
+
+
+@app.get("/dashboard/classification-history")
+def dashboard_classification_history():
+    """
+    Dashboard classification history endpoint.
+    """
+    return DashboardMetrics().get_dashboard_classification_history()

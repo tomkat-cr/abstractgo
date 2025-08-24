@@ -110,6 +110,12 @@
         "train_loss": 0.4109358624583867,
         "epoch": 10.0
       }
+    },
+    "confusion_matrix": {
+      "cardiovascular": [[451, 3], [41, 218]],
+      "hepatorenal": [[474, 9], [38, 192]],
+      "neurological": [[336, 32], [63, 282]],
+      "oncological": [[586, 4], [48, 75]]
     }
   }
   
