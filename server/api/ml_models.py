@@ -3,6 +3,8 @@ import os
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 
+from .utilities import get_non_empty_value
+
 
 class MLModels:
     def __init__(self):
@@ -12,24 +14,24 @@ class MLModels:
                        "oncological"]
         self.debug = os.environ.get("SERVER_DEBUG", "0") == "1"
         self.params = {
-            "BASE_MODEL_NAME": os.environ.get("BASE_MODEL_NAME",
-                                              "dmis-lab/biobert-v1.1"),
-            "CLOUD_MODEL_NAME": os.environ.get("CLOUD_MODEL_NAME",
-                                               "Hiver77/MDT"),
-            "USE_LOCAL_MODEL": os.environ.get("USE_LOCAL_MODEL", "0") == "1",
-            "LOCAL_MODEL_PATH": os.environ.get("LOCAL_MODEL_PATH",
-                                               "/code/saved_models"),
-            "LOCAL_MODEL_TOKENIZER_PATH": os.environ.get(
+            "BASE_MODEL_NAME": get_non_empty_value("BASE_MODEL_NAME",
+                                                   "dmis-lab/biobert-v1.1"),
+            "CLOUD_MODEL_NAME": get_non_empty_value("CLOUD_MODEL_NAME",
+                                                    "Hiver77/MDT"),
+            "USE_LOCAL_MODEL": get_non_empty_value(
+                "USE_LOCAL_MODEL", "0") == "1",
+            "LOCAL_MODEL_PATH": get_non_empty_value("LOCAL_MODEL_PATH",
+                                                    "/code/saved_models"),
+            "LOCAL_MODEL_TOKENIZER_PATH": get_non_empty_value(
                 "LOCAL_MODEL_TOKENIZER_PATH",
                 "/code/saved_models")
         }
 
-        print(f"USE_LOCAL_MODEL: {self.params['USE_LOCAL_MODEL']}")
-        print(f"BASE_MODEL_NAME: {self.params['BASE_MODEL_NAME']}")
-        print(f"CLOUD_MODEL_NAME: {self.params['CLOUD_MODEL_NAME']}")
-        print(f"LOCAL_MODEL_PATH: {self.params['LOCAL_MODEL_PATH']}")
-        print("LOCAL_MODEL_TOKENIZER_PATH: "
-              f"{self.params['LOCAL_MODEL_TOKENIZER_PATH']}")
+        if self.debug:
+            print(f"MLModels: {self.params}")
+
+        # Load the model
+        self.load_model()
 
     def load_model(self):
         if self.params["USE_LOCAL_MODEL"]:

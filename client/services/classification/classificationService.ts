@@ -31,7 +31,7 @@ export class ClassificationService {
       formData.append('file', file)
 
       const response = await apiClient.post<PDFReadApiResponse>(
-        '/pdfread',
+        API_ENDPOINTS.CLASSIFICATION.PDF_READ,
         formData,
         {
           headers: {

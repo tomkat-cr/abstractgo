@@ -64,3 +64,5 @@ ssl-certs-creation:
 	@echo "Creating SSL certificates"
 	@bash ./scripts/local_ssl_certs_creation.sh
 	
+branch-update:
+	bash ./scripts/branch_update_from_main.sh
