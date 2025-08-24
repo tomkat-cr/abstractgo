@@ -68,3 +68,19 @@ def get_file_id(filename: str) -> str:
 def get_uuid() -> str:
     """ Get the uuid """
     return str(uuid4())
+
+
+def get_standard_response(
+    error: bool = False,
+    error_message: str = None,
+    resultset: list = None,
+    **kwargs,
+):
+    if not resultset:
+        resultset = []
+    return {
+        "error": error,
+        "error_message": error_message,
+        "resultset": resultset,
+        **kwargs
+    }

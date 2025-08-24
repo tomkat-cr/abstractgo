@@ -143,7 +143,7 @@ if [ "${SSL_CERT_GEN_METHOD}" = "mkcert" ]; then
     # 2) Install the local CA:
     mkcert -install
 
-    # 3) Generate a certificate for the local domain name, e.g. app.exampleapp.local, in the current directory:
+    # 3) Generate a certificate for the local domain name, e.g. abstractgo.dev, in the current directory:
     mkcert -key-file "${cert_key}" -cert-file "${cert_crt}" "${domain}"
 
     mkcert_cert_ca_path="$(mkcert -CAROOT)/rootCA.pem"

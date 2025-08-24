@@ -64,6 +64,8 @@ AbstractGo is an AI/ML system that classifies biomedical literature using only t
 - **Make** (task runner in root, `client/`, and `server/`)
 - **npm workspaces** (aggregate scripts across packages)
 
+![AbstractGo Banner](./assets//abstractgo.banner.010.jpeg)
+
 ## Getting Started
 
 ### Prerequisites
