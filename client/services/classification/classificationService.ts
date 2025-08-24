@@ -7,17 +7,50 @@ import {
   PDFReadResponse,
   ClassificationApiResponse,
   PDFReadApiResponse,
+  PredictionItem,
 } from '@/services/types/classification'
 
 export class ClassificationService {
   // Predict classification for text input
   async predictClassification(request: ClassificationRequest): Promise<ClassificationResponse> {
     try {
-      const response = await apiClient.post<ClassificationApiResponse>(
+      console.log('Sending request to:', API_ENDPOINTS.CLASSIFICATION.PREDICT)
+      console.log('Request data:', request)
+      
+      const predictions = await apiClient.post<PredictionItem[]>(
         API_ENDPOINTS.CLASSIFICATION.PREDICT,
         request
       )
-      return response.data
+      
+      console.log('Raw response:', predictions)
+      console.log('Response data type:', typeof predictions)
+      console.log('Response data length:', Array.isArray(predictions) ? predictions.length : 'not an array')
+      
+      if (!predictions || predictions.length === 0) {
+        console.error('No predictions received - predictions:', predictions)
+        throw new Error('No predictions received from server')
+      }
+      
+      console.log('Processing predictions:', predictions)
+      
+      // Find the prediction with highest score (primary prediction)
+      const primaryPrediction = predictions.reduce((prev: PredictionItem, current: PredictionItem) => 
+        prev.score > current.score ? prev : current
+      )
+      
+      console.log('Primary prediction:', primaryPrediction)
+      
+      // Create the response in our expected format
+      const classificationResponse: ClassificationResponse = {
+        category: primaryPrediction.label,
+        confidence: primaryPrediction.score,
+        all_predictions: predictions,
+        timestamp: new Date().toISOString(),
+      }
+      
+      console.log('Final classification response:', classificationResponse)
+      
+      return classificationResponse
     } catch (error) {
       console.error('Error predicting classification:', error)
       throw error
@@ -27,10 +60,11 @@ export class ClassificationService {
   // Upload PDF and extract title/abstract
   async uploadPDFAndExtract(file: File): Promise<PDFReadResponse> {
     try {
+      console.log('uploadPDFAndExtract: Starting extraction for file:', file.name)
       const formData = new FormData()
       formData.append('file', file)
 
-      const response = await apiClient.post<PDFReadApiResponse>(
+      const result = await apiClient.post<PDFReadResponse>(
         API_ENDPOINTS.CLASSIFICATION.PDF_READ,
         formData,
         {
@@ -39,9 +73,10 @@ export class ClassificationService {
           },
         }
       )
-      return response.data
+      console.log('uploadPDFAndExtract: Raw response from server:', result)
+      return result
     } catch (error) {
-      console.error('Error uploading PDF:', error)
+      console.error('uploadPDFAndExtract: Error occurred:', error)
       throw error
     }
   }
@@ -49,11 +84,11 @@ export class ClassificationService {
   // Batch prediction for multiple articles
   async batchPredict(requests: ClassificationRequest[]): Promise<ClassificationResponse[]> {
     try {
-      const response = await apiClient.post<ClassificationApiResponse[]>(
+      const results = await apiClient.post<ClassificationApiResponse[]>(
         API_ENDPOINTS.CLASSIFICATION.BATCH_PREDICT,
         { articles: requests }
       )
-      return response.data.map(item => item.data)
+      return results.map((item: ClassificationApiResponse) => item.data)
     } catch (error) {
       console.error('Error in batch prediction:', error)
       throw error
@@ -63,10 +98,10 @@ export class ClassificationService {
   // Get classification history
   async getClassificationHistory(limit: number = 50): Promise<ClassificationResponse[]> {
     try {
-      const response = await apiClient.get<ClassificationApiResponse[]>(
+      const history = await apiClient.get<ClassificationApiResponse[]>(
         `${API_ENDPOINTS.CLASSIFICATION.HISTORY}?limit=${limit}`
       )
-      return response.data.map(item => item.data)
+      return history.map((item: ClassificationApiResponse) => item.data)
     } catch (error) {
       console.error('Error fetching classification history:', error)
       throw error
