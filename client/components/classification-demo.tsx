@@ -143,24 +143,19 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
   }
 
   const handleFileUpload = async (file: File) => {
-    console.log('File selected:', file.name, file.type, file.size)
-
     try {
       const extractedData = await uploadPDF(file)
-      console.log('PDF extraction result:', extractedData)
       
       // Automatically classify the extracted content
       if (extractedData && extractedData.title && extractedData.abstract) {
-        console.log('Extraction successful, starting classification...')
         await predict({
           title: extractedData.title,
           abstract: extractedData.abstract,
         })
       } else {
-        console.log('Extraction failed - missing title or abstract:', extractedData)
+        // Error is handled by the hook
       }
     } catch (error) {
-      console.error('Error in handleFileUpload:', error)
       // Error is handled by the hook
     }
   }

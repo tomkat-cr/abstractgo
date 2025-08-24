@@ -95,18 +95,15 @@ export const usePDFUpload = () => {
 
   const uploadPDF = useCallback(async (file: File) => {
     try {
-      console.log('usePDFUpload: Starting upload for file:', file.name)
       setData(prev => ({ ...prev, loading: true, error: null }))
       
       // Validate file
       const validation = classificationService.validatePDFFile(file)
-      console.log('usePDFUpload: Validation result:', validation)
       if (!validation.valid) {
         throw new Error(validation.errors.join(', '))
       }
 
       const result = await classificationService.uploadPDFAndExtract(file)
-      console.log('usePDFUpload: Service result:', result)
       
       setData({
         file,
@@ -114,11 +111,9 @@ export const usePDFUpload = () => {
         loading: false,
         error: null,
       })
-      console.log('usePDFUpload: State updated with extracted data')
 
       return result
     } catch (error) {
-      console.error('usePDFUpload: Error occurred:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload PDF'
       setData(prev => ({
         ...prev,

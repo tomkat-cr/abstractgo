@@ -65,15 +65,10 @@ export class DashboardService {
   // Get distribution analysis
   async getDistribution(): Promise<CategoryDistribution[]> {
     try {
-      console.log('🔍 DashboardService: Making request to distribution endpoint...')
-      const response = await apiClient.get<DistributionApiResponse>(API_ENDPOINTS.DASHBOARD.DISTRIBUTION)
-      console.log('🔍 DashboardService: Raw response received:', response)
-      console.log('🔍 DashboardService: Response data:', response.data)
-      console.log('🔍 DashboardService: Response data length:', response.data?.length)
+      const response = await apiClient.get<CategoryDistribution[]>(API_ENDPOINTS.DASHBOARD.DISTRIBUTION)
       
       // Manejar caso donde la respuesta es directamente el array
       const distributionData = response.data || response
-      console.log('🔍 DashboardService: Final distribution data:', distributionData)
       
       return distributionData
     } catch (error) {
@@ -85,10 +80,7 @@ export class DashboardService {
   // Get analytics data
   async getAnalytics(): Promise<AnalyticsData> {
     try {
-      console.log('🔍 DashboardService: Making request to analytics endpoint...')
       const response = await apiClient.get<AnalyticsData>(API_ENDPOINTS.DASHBOARD.ANALYTICS)
-      console.log('🔍 DashboardService: Raw response received:', response)
-      console.log('🔍 DashboardService: Daily classifications length:', response?.daily_classifications?.length)
       return response
     } catch (error) {
       console.error('🔍 DashboardService: Error fetching analytics data:', error)
