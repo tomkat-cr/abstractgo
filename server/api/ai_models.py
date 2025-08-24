@@ -35,10 +35,8 @@ class AIModels:
 
         # Store the raw params as requested so they are available to all
         # methods
-        if params is None:
-            self.params: Dict[str, Any] = {}
-        else:
-            self.params: Dict[str, Any] = params
+        self.params: Dict[str, Any] = params or {}
+
         if self.debug:
             litellm._turn_on_debug()
             print(f"AIModels: {self.params}")

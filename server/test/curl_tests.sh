@@ -23,6 +23,7 @@ echo ""
 perform_curl http://localhost:8000/
 
 echo ""
+echo ""
 echo "Training Metrics:"
 echo ""
 

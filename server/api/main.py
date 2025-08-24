@@ -51,8 +51,7 @@ def predict(
     """
     Predict categories for a biomedical article.
 
-    Accepts:
-    - JSON body with `title` and `abstract` (backwards compatible), or
+    Accepts a JSON body with `title` and `abstract`.
 
     Returns a JSON object with the predicted category and confidence.
     """
@@ -258,7 +257,7 @@ def get_assets(
     if DEBUG:
         print(f"get_assets() - filename: {filename}")
 
-    file_path = os.path.join('/tmp', filename)
+    file_path = os.path.join('/tmp', os.path.basename(filename))
     if DEBUG:
         print(f"get_assets() - file_path: {file_path}")
 
