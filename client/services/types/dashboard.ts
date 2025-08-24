@@ -1,17 +1,17 @@
 // Dashboard Metrics Types
 export interface DashboardMetrics {
-  f1_score: number
-  accuracy: number
+  f1_score: Record<string, number>
+  accuracy: Record<string, number>
   total_articles: number
   processing_speed: number
-  precision?: number
-  recall?: number
-  avg_processing_time?: number
+  precision: Record<string, number>
+  recall: Record<string, number>
+  avg_processing_time: number
 }
 
 // Confusion Matrix Types
 export interface ConfusionMatrix {
-  matrix: number[][]
+  matrix: Record<string, number[][]>
   categories: string[]
   total_predictions: number
   accuracy_per_category: Record<string, number>

@@ -20,10 +20,56 @@ export function ConfusionMatrix({ className = "" }: ConfusionMatrixProps) {
 
   const getMaxValue = () => {
     if (!confusionMatrix?.matrix) return 1
-    return Math.max(...confusionMatrix.matrix.flat())
+    
+    // Find the maximum value across all categories
+    let maxValue = 0
+    Object.values(confusionMatrix.matrix).forEach((categoryMatrix: any) => {
+      if (Array.isArray(categoryMatrix)) {
+        categoryMatrix.forEach((row: any) => {
+          if (Array.isArray(row)) {
+            row.forEach((value: number) => {
+              if (value > maxValue) maxValue = value
+            })
+          }
+        })
+      }
+    })
+    return maxValue
   }
 
   const maxValue = getMaxValue()
+
+  // Transform the matrix data for display
+  const getDisplayMatrix = () => {
+    if (!confusionMatrix?.matrix || !confusionMatrix?.categories) return []
+    
+    const categories = confusionMatrix.categories
+    const displayMatrix: number[][] = []
+    
+    // Create a simple matrix showing true positives on diagonal
+    categories.forEach((actualCategory, rowIndex) => {
+      const row: number[] = []
+      categories.forEach((predictedCategory, colIndex) => {
+        if (rowIndex === colIndex) {
+          // Get true positives for this category
+          const categoryMatrix = confusionMatrix.matrix[actualCategory as keyof typeof confusionMatrix.matrix]
+          if (categoryMatrix && Array.isArray(categoryMatrix) && categoryMatrix[0] && Array.isArray(categoryMatrix[0])) {
+            const value = categoryMatrix[0][0] || 0
+            row.push(value)
+          } else {
+            row.push(0)
+          }
+        } else {
+          row.push(0)
+        }
+      })
+      displayMatrix.push(row)
+    })
+    
+    return displayMatrix
+  }
+
+  const displayMatrix = getDisplayMatrix()
 
   return (
     <Card className={className}>
@@ -61,7 +107,7 @@ export function ConfusionMatrix({ className = "" }: ConfusionMatrixProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {confusionMatrix.matrix.map((row, rowIndex) => (
+                    {displayMatrix.map((row, rowIndex) => (
                       <tr key={rowIndex}>
                         <td className="p-2 font-medium text-sm text-muted-foreground">
                           {confusionMatrix.categories[rowIndex]}

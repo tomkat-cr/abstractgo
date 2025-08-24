@@ -12,6 +12,16 @@ interface DistributionAnalysisProps {
 export function DistributionAnalysis({ className = "" }: DistributionAnalysisProps) {
   const { data: distribution, loading, error, refetch } = useDistribution()
 
+  // Debug logs para Distribution Analysis
+  console.log('🔍 DistributionAnalysis Debug:', {
+    distribution,
+    loading,
+    error,
+    hasData: !!distribution,
+    distributionLength: distribution?.length,
+    firstItem: distribution?.[0]
+  })
+
   const getCategoryColor = (index: number) => {
     const colors = [
       "bg-blue-500",

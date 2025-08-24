@@ -12,19 +12,26 @@ interface MetricCardProps {
 export function MetricCard({ className = "" }: MetricCardProps) {
   const { data: metrics, loading, error, refetch } = useMetrics()
 
+  // Helper function to calculate average from category-based metrics
+  const calculateAverage = (categoryMetrics: Record<string, number> | undefined): number => {
+    if (!categoryMetrics) return 0
+    const values = Object.values(categoryMetrics)
+    return values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0
+  }
+
   const metricConfigs = [
     {
       title: "F1-Score",
-      value: metrics?.f1_score ? `${(metrics.f1_score * 100).toFixed(1)}%` : "0%",
-      description: "Harmonic mean of precision and recall",
+      value: `${(calculateAverage(metrics?.f1_score) * 100).toFixed(1)}%`,
+      description: "Average F1-score across all categories",
       icon: Brain,
       color: "text-blue-600",
       bgColor: "bg-blue-100",
     },
     {
       title: "Accuracy",
-      value: metrics?.accuracy ? `${(metrics.accuracy * 100).toFixed(1)}%` : "0%",
-      description: "Overall classification accuracy",
+      value: `${(calculateAverage(metrics?.accuracy) * 100).toFixed(1)}%`,
+      description: "Average accuracy across all categories",
       icon: Activity,
       color: "text-green-600",
       bgColor: "bg-green-100",
