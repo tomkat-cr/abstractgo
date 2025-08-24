@@ -3,7 +3,7 @@ import os
 from .json_models import get_all_training_metrics
 
 
-class DashboardMetrics:
+class StaticDashboardMetrics:
     def __init__(self):
         self.debug = os.environ.get("SERVER_DEBUG", "0") == "1"
         self.metrics = get_all_training_metrics()
@@ -28,13 +28,17 @@ class DashboardMetrics:
             for category in self.cm.keys()])}
 
     def get_f1_score(self):
-        return {label: value for label, value in zip(self.cm.keys(), [
-            2 * self.cm[category][0][0] / (2 * self.cm[category][0][0] +
-                self.cm[category][0][1] + self.cm[category][1][0] +
-                self.cm[category][1][1])
-            for category in self.cm.keys()])}
+        results = {}
+        for category, matrix in self.cm.items():
+            tp = matrix[0][0]
+            fp = matrix[0][1]
+            fn = matrix[1][0]
+            denominator = 2 * tp + fp + fn
+            results[category] = (2 * tp) / denominator if denominator > 0 \
+                else 0.0
+        return results
 
-    def get_accuracy(self):
+    def get_accuracy_per_category(self):
         return {label: value for label, value in zip(self.cm.keys(), [
             (self.cm[category][0][0] + self.cm[category][1][1]) / (
                 self.cm[category][0][0] + self.cm[category][0][1]
@@ -52,10 +56,10 @@ class DashboardMetrics:
         return self.metrics["training_output"]["metrics"]["train_runtime"]
 
     def get_last_updated(self):
-        return self.metrics["training_output"]["metrics"]["train_runtime"]
+        return self.metrics["last_updated"]
 
     def get_data_range(self):
-        return self.metrics["training_output"]["metrics"]["train_runtime"]
+        return self.metrics["data_range"]
 
     def get_summary(self):
         return self.metrics["summary"]
@@ -64,19 +68,10 @@ class DashboardMetrics:
         return self.metrics["training_output"]
 
     def get_total_predictions(self):
-        total_predictions = 0
-        for category in self.cm.keys():
-            total_predictions += self.cm[category][0][0] + \
-                self.cm[category][0][1] + \
-                self.cm[category][1][0] + \
-                self.cm[category][1][1]
-        return total_predictions
-
-    def get_accuracy_per_category(self):
-        return {label: value for label, value in zip(self.cm.keys(), [
-            (self.cm[category][0][0] + self.cm[category][1][1])
-            / self.get_total_predictions()
-            for category in self.cm.keys()])}
+        return sum(
+            matrix[0][0] + matrix[0][1] + matrix[1][0] + matrix[1][1]
+            for matrix in self.cm.values()
+        )
 
     # ----- Functions for the API endpoints -----
 
@@ -86,7 +81,7 @@ class DashboardMetrics:
         """
         result = {
             "f1_score": self.get_f1_score(),
-            "accuracy": self.get_accuracy(), 
+            "accuracy": self.get_accuracy_per_category(),
             "total_articles": self.get_total_articles(),
             "processing_speed":
                 self.get_processing_speed(),
@@ -116,15 +111,29 @@ class DashboardMetrics:
         Get the dashboard performance.
         """
         result = []
-        for category in self.cm.keys():
+        total_predictions_all_cats = self.get_total_predictions()
+
+        for category, matrix in self.cm.items():
+            tp = matrix[0][0]
+            fp = matrix[0][1]
+            fn = matrix[1][0]
+            tn = matrix[1][1]
+
+            precision_denom = tp + fp
+            recall_denom = tp + fn
+            f1_denom = 2 * tp + fp + fn
+            accuracy_denom = tp + fp + fn + tn
+
             result.append({
                 "category": category,
-                "accuracy": self.get_accuracy_per_category()[category],
-                "f1_score": self.get_f1_score()[category],
-                "precision": self.get_precision()[category],
-                "recall": self.get_recall()[category],
-                "total_predictions": self.get_total_predictions(),
-                "correct_predictions": self.cm[category][0][0],
+                "accuracy": (tp + tn) / accuracy_denom if accuracy_denom > 0
+                else 0,
+                "f1_score": (2 * tp) / f1_denom if f1_denom > 0 else 0,
+                "precision": tp / precision_denom if precision_denom > 0
+                else 0,
+                "recall": tp / recall_denom if recall_denom > 0 else 0,
+                "total_predictions": total_predictions_all_cats,
+                "correct_predictions": tp,
             })
         return result
 
@@ -150,10 +159,34 @@ class DashboardMetrics:
         """
         Get the dashboard analytics.
         """
-        return {"status": "ok"}
+        result = {
+            "daily_classifications": [],
+            "accuracy_trend": [],
+            "categories_trend": {
+                "cardiovascular": [],
+                "neurological": [],
+                "hepatorenal": [],
+                "oncological": [],
+            },
+            "processing_speed_trend": [],
+            "error_rate_trend": [],
+        }
+        return result
 
     def get_dashboard_classification_history(self):
         """
         Get the dashboard classification history.
         """
-        return {"status": "ok"}
+        result = []
+        for item in self.metrics["classification_history"]:
+            result.append({
+                "id": item["id"],
+                "title": item["title"],
+                "abstract": item["abstract"],
+                "category": item["category"],
+                "confidence": item["confidence"],
+                "date": item["date"],
+                "processing_time": item["processing_time"],
+                "status": item["status"],
+            })
+        return result
