@@ -8,20 +8,25 @@ export interface PDFUploadRequest {
   file: File
 }
 
-// Classification Response Types
+// Server Response Types (actual response from /predict endpoint)
+export interface PredictionItem {
+  label: string
+  score: number
+}
+
+// Classification Response Types (processed for frontend)
 export interface ClassificationResponse {
   category: string
   confidence: number
-  processing_time: number
-  model_version: string
-  timestamp: string
+  processing_time?: number
+  model_version?: string
+  timestamp?: string
+  all_predictions?: PredictionItem[]
 }
 
 export interface PDFReadResponse {
   title: string
   abstract: string
-  success: boolean
-  error?: string
 }
 
 // API Response Types
