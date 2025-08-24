@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Body
 from fastapi import UploadFile, File
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from .ai_models import AIModels
 from .ml_models import MLModels
@@ -24,6 +25,16 @@ PDFREAD_USE_URL = os.environ.get("PDFREAD_USE_URL", "0") == "1"
 
 # Initialize the FastAPI application
 app = FastAPI(title="Biomedical Article Classifier API")
+
+CORS_ORIGIN = os.environ.get("CORS_ORIGIN", "http://localhost:3000")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[CORS_ORIGIN],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 ml_model = MLModels()
 
@@ -143,8 +154,6 @@ def pdfread(
         temp_url = None
 
         # Content must be in base64 format for OpenAI
-        # content = raw_bytes.decode("utf-8", errors="ignore").strip()
-        # content = base64.b64encode(content.encode("utf-8")).decode("utf-8")
         content = base64.b64encode(raw_bytes).decode("utf-8")
 
         if file_name and file_name.endswith(".pdf"):

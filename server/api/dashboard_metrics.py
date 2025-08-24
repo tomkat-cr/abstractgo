@@ -1,8 +1,11 @@
+import os
+
 from .json_models import get_all_training_metrics
 
 
 class DashboardMetrics:
     def __init__(self):
+        self.debug = os.environ.get("SERVER_DEBUG", "0") == "1"
         self.metrics = get_all_training_metrics()
         self.cm = self.metrics["confusion_matrix"]
 
@@ -63,8 +66,10 @@ class DashboardMetrics:
     def get_total_predictions(self):
         total_predictions = 0
         for category in self.cm.keys():
-            total_predictions += self.cm[category][0][0] + self.cm[category][0][1] + \
-                self.cm[category][1][0] + self.cm[category][1][1]
+            total_predictions += self.cm[category][0][0] + \
+                self.cm[category][0][1] + \
+                self.cm[category][1][0] + \
+                self.cm[category][1][1]
         return total_predictions
 
     def get_accuracy_per_category(self):
@@ -98,10 +103,12 @@ class DashboardMetrics:
         """
         result = {
             "matrix": self.cm,
-            "categories": self.cm.keys(),
+            "categories": list(self.cm.keys()),
             "total_predictions": self.get_total_predictions(),
             "accuracy_per_category": self.get_accuracy_per_category(),
         }
+        if self.debug:
+            print(">> get_dashboard_confusion_matrix | result:", result)
         return result
 
     def get_dashboard_performance(self):
