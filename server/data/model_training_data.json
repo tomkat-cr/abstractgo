@@ -116,6 +116,29 @@
       "hepatorenal": [[474, 9], [38, 192]],
       "neurological": [[336, 32], [63, 282]],
       "oncological": [[586, 4], [48, 75]]
-    }
-  }
-  
+    },
+    "data_range": "neurological: Range = 330 (Min: 19, Max: 349), hepatorenal: Range = 483 (Min: 0, Max: 483), cardiovascular: Range = 384 (Min: 14, Max: 398), oncological: Range = 590 (Min: 0, Max: 590)",
+    "last_updated": "2025-08-22T12:00:00Z",
+    "classification_history": [
+      {
+        "id": 1,
+        "title": "Title 1",
+        "abstract": "Abstract 1",
+        "category": "cardiovascular",
+        "confidence": 0.95,
+        "date": "2025-08-22T12:00:00Z",
+        "processing_time": 1.23,
+        "status": "success"
+      },
+      {
+        "id": 2,
+        "title": "Title 2",
+        "abstract": "Abstract 2",
+        "category": "hepatorenal",
+        "confidence": 0.85,
+        "date": "2025-08-22T12:00:00Z",
+        "processing_time": 1.23,
+        "status": "success"
+      }
+    ]
+}

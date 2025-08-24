@@ -46,3 +46,9 @@ lint:
 	poetry run flake8
 
 requirements: build
+
+curl_tests:
+	JQ=0 bash ./test/curl_tests.sh
+
+curl_tests_jq:
+	bash ./test/curl_tests.sh
