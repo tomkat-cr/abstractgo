@@ -218,7 +218,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
           <div className="space-y-4">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 border-b border-gray-200 dark:border-gray-700">
                 <TabsTrigger value="text">Text Input</TabsTrigger>
                 <TabsTrigger value="pdf">PDF Upload</TabsTrigger>
               </TabsList>
