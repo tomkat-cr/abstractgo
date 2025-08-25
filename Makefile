@@ -36,6 +36,8 @@ logs-f:
 clean-docker:
 	cd deploy && docker compose down -v
 	docker system prune -f
+	@echo ""
+	@echo "Done cleaning up"
 
 # Show service status
 status:
@@ -43,9 +45,13 @@ status:
 
 install:
 	npm run install:all
+	@echo ""
+	@echo "Done installing"
 
 build:
 	npm run build
+	@echo ""
+	@echo "Done building"
 
 start:
 	npm run start
@@ -55,6 +61,8 @@ dev:
 
 clean:
 	npm run clean
+	@echo ""
+	@echo "Done cleaning up"
 
 list-scripts:
 	npm run --workspace=abstractgo-server
@@ -66,3 +74,10 @@ ssl-certs-creation:
 	
 branch-update:
 	bash ./scripts/branch_update_from_main.sh
+	@echo ""
+	@echo "Done updating branch"
+
+init-app-environment:
+	bash ./scripts/init_app_environment.sh
+	@echo ""
+	@echo "Done initializing app environment"

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from uuid import uuid4
 
 SERVER_DEBUG = os.environ.get("SERVER_DEBUG", "0") == "1"
@@ -84,3 +85,11 @@ def get_standard_response(
         "resultset": resultset,
         **kwargs
     }
+
+
+def log_info(message: str):
+    """
+    Log information message
+    """
+    date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"{date_time} - {message}")

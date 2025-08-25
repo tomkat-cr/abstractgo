@@ -83,12 +83,16 @@ AbstractGo is an intelligent AI/ML system designed to classify biomedical litera
 
 Before running this project, make sure you have the following installed:
 
-- [Docker](https://docs.docker.com/engine/install/) (to run the server locally)
+- [Docker](https://docs.docker.com/engine/install/) to run the server with containers
 - [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) (better) or [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (version 18.0.0 or higher)
-- [Python](https://www.python.org/downloads/) (version > 3.11.0, < 3.14)
+- [Poetry](https://python-poetry.org/docs/#installation) (to manage the dependencies).
+- [Python](https://www.python.org/downloads/) (version > 3.11.0, < 3.14) if you plan to run the server locally without containers
 - [Git](https://git-scm.com/downloads) (to clone the repository)
-- Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) (to run the Makefile)
-- [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) (to use the the PDF upload feature)
+- Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) to run the automated commands
+- [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) to use the the PDF upload feature and other LLM integrations
+
+NOTES:
+- After install poetry, run `poetry self add poetry-plugin-export` to install its dependencies.
 
 ### Installation
 
@@ -103,19 +107,37 @@ cd abstractgo
 make install
 ```
 
-3. **Set up environment variables**
+3. **Set up environment variables and other files**
 
-Create `.env` files in the client and server directories:
+Create `.env` files in the client and server directories by running the following command:
+
+```bash
+make init-app-environment
+```
+
+This will create the `.env` files in the client and server directories with the default values.
+
+Then you can edit the `.env` files to your needs.
 
 **Client `.env`:**
+
 ```bash
+nano client/.env
+```
+
+```env
 NEXT_PUBLIC_APP_DOMAIN_NAME=localhost
 NEXT_PUBLIC_API_BASE_URL=http://${NEXT_PUBLIC_APP_DOMAIN_NAME}:8000
 NEXT_PUBLIC_DEBUG=0
 ```
 
 **Server `.env`:**
+
 ```bash
+nano server/.env
+```
+
+```env
 SERVER_DEBUG=0
 PORT=8000
 APP_DOMAIN_NAME=localhost
@@ -127,6 +149,9 @@ OPENAI_API_KEY=sk-proj-1234567890
 
 **MCPServer `.env`:**
 ```bash
+```
+
+```env
 SERVER_DEBUG=0
 PORT=8000
 APP_DOMAIN_NAME=localhost
@@ -136,6 +161,18 @@ LLM_MODEL="gpt-5-nano"
 OPENAI_API_KEY=sk-proj-1234567890
 AG_API_KEY=ag-api-key-123... # Set an API key to restrict the MCP server use
 MCP_INSPECTOR=0 # Set to 1 to use the MCP Inspector
+```
+
+**Deploy `docker-compose.yml`:**
+
+```bash
+nano deploy/docker-compose.yml # edit the ports and other configuration
+```
+
+**Deploy `nginx.conf`:**
+
+```bash
+nano deploy/nginx.conf # edit the ports and other configuration
 ```
 
 4. **Generate SSL certificates**
@@ -248,8 +285,15 @@ make run
 
 ### Production Mode
 
-**Build the client:**
+**Prepare the server**
+
+You need to install the [pre-requisites](#prerequisites) and the [environment variables](#installation).
+
+To install Docker and set a global Nginx Proxy, you can check the [GenericSuite Gitops](https://github.com/tomkat-cr/genericsuite-gitops) repository that has a solution for this.
+
+**Build and run the complete stack:**
 ```bash
+make install
 make run
 ```
 

@@ -1,0 +1,108 @@
+services:
+  abstractgo-server:
+    container_name: abstractgo-server
+    image: python:3.12-slim
+    command: sh -c "bash /code/all-in-one-server-entrypoint.sh"
+    volumes:
+      - ../server:/code
+      - ../server/requirements.txt:/code/requirements.txt
+      - ../mcp-server:/code/mcp-server
+      - ../server:/code/mcp-server/lib
+      - ../mcp-server/requirements.txt:/code/mcp-server/requirements.txt
+      - ../saved_models:/code/saved_models
+      - ./all-in-one-server-entrypoint.sh:/code/all-in-one-server-entrypoint.sh
+      - ../scripts/load_envs.sh:/code/load_envs.sh
+    environment:
+      # Server environment variables
+      - PORT=${PORT}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - APP_DOMAIN_NAME=${APP_DOMAIN_NAME}
+      - APP_NAME=${APP_NAME}
+      - ORG_NAME=${ORG_NAME}
+      - SERVER_DEBUG=${SERVER_DEBUG}
+      - BASE_MODEL_NAME=${BASE_MODEL_NAME}
+      - CLOUD_MODEL_NAME=${CLOUD_MODEL_NAME}
+      - USE_LOCAL_MODEL=${USE_LOCAL_MODEL}
+      - LOCAL_MODEL_PATH=${LOCAL_MODEL_PATH}
+      - LOCAL_MODEL_TOKENIZER_PATH=${LOCAL_MODEL_TOKENIZER_PATH}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - AIMLAPI_API_KEY=${AIMLAPI_API_KEY}
+      - AIMLAPI_BASE_URL=${AIMLAPI_BASE_URL}
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS}
+      - LLM_TOP_P=${LLM_TOP_P}
+      - LLM_SEED=${LLM_SEED}
+      # MCP Server environment variables
+      - AG_API_KEY=${AG_API_KEY}
+      - MCP_INSPECTOR=${MCP_INSPECTOR}
+      - MCP_SERVER_PORT=${MCP_SERVER_PORT}
+      - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
+    ports: ["8000:8000", "8070:8070"]
+    networks:
+      - my_shared_network
+
+  # abstractgo-mcp-server:
+  #   container_name: abstractgo-mcp-server
+  #   image: python:3.12-slim
+  #   command: sh -c "bash /code/mcp-server-entrypoint.sh"
+  #   # Stay attached to the container (for MCP Inspector)
+  #   stdin_open: true
+  #   # Stay running
+  #   tty: true
+  #   volumes:
+  #     - ../server:/code/lib
+  #     - ../saved_models:/code/saved_models
+  #     - ../mcp-server:/code
+  #     - ../mcp-server/requirements.txt:/code/requirements.txt
+  #     - ./mcp-server-entrypoint.sh:/code/mcp-server-entrypoint.sh
+  #   environment:
+  #     # Server environment variables
+  #     - PORT=${PORT}
+  #     - CORS_ORIGIN=${CORS_ORIGIN}
+  #     - APP_DOMAIN_NAME=${APP_DOMAIN_NAME}
+  #     - APP_NAME=${APP_NAME}
+  #     - ORG_NAME=${ORG_NAME}
+  #     - SERVER_DEBUG=${SERVER_DEBUG}
+  #     - BASE_MODEL_NAME=${BASE_MODEL_NAME}
+  #     - CLOUD_MODEL_NAME=${CLOUD_MODEL_NAME}
+  #     - USE_LOCAL_MODEL=${USE_LOCAL_MODEL}
+  #     - LOCAL_MODEL_PATH=${LOCAL_MODEL_PATH}
+  #     - LOCAL_MODEL_TOKENIZER_PATH=${LOCAL_MODEL_TOKENIZER_PATH}
+  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
+  #     - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+  #     - AIMLAPI_API_KEY=${AIMLAPI_API_KEY}
+  #     - AIMLAPI_BASE_URL=${AIMLAPI_BASE_URL}
+  #     - LLM_MODEL=${LLM_MODEL}
+  #     - LLM_TEMPERATURE=${LLM_TEMPERATURE}
+  #     - LLM_MAX_TOKENS=${LLM_MAX_TOKENS}
+  #     - LLM_TOP_P=${LLM_TOP_P}
+  #     - LLM_SEED=${LLM_SEED}
+  #     # MCP Server environment variables
+  #     - AG_API_KEY=${AG_API_KEY}
+  #     - MCP_INSPECTOR=${MCP_INSPECTOR}
+  #     - MCP_SERVER_PORT=${MCP_SERVER_PORT}
+  #     - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
+  #   ports: ["8070:8070"]
+  #   networks:
+  #     - my_shared_network
+
+  abstractgo-client:
+    container_name: abstractgo-client
+    image: nginx:alpine
+    volumes:
+      - ../client/dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    environment:
+      - UI_PORT=${UI_PORT:-3000}
+      - UI_SECURE_PORT=${UI_SECURE_PORT:-3001}
+    ports: ["3000:80", "3001:443"]
+    depends_on: [abstractgo-server]
+    networks:
+      - my_shared_network
+
+networks:
+  my_shared_network:
+    external: true # Reference the same external network as the other services
