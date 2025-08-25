@@ -6,7 +6,17 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd $SCRIPT_DIR
 
-echo "📂 Server directory: $SCRIPT_DIR"
+clean_up() {
+    echo "🧹 Cleaning up..."
+	bash ./link_common_assets.sh unlink
+}
+
+# Always execute the function clean_up when the script is terminated
+trap clean_up EXIT
+
+copy_lib() {
+    bash ./link_common_assets.sh link
+}
 
 # CLI Parameters
 # APP_STAGE="${1:-qa}"
@@ -97,6 +107,8 @@ POETRY_ARGS="APP_STAGE=$APP_STAGE MCP_SERVER_PORT=$MCP_SERVER_PORT MCP_SERVER_HO
 if [ "${GS_API_KEY}" != '' ]; then
     POETRY_ARGS="${POETRY_ARGS} GS_API_KEY=${GS_API_KEY}"
 fi
+
+copy_lib
 
 if [ "$MCP_INSPECTOR" = "1" ]; then
     npx @modelcontextprotocol/inspector \

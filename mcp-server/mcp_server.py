@@ -10,7 +10,7 @@ import json
 from typing import Dict, Any
 
 # For MCP Server
-from fastmcp import FastMCP, Client
+from fastmcp import FastMCP
 
 from lib.api.endpoint_methods import (
     authentication_tool,

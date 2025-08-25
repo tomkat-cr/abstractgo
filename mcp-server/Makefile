@@ -22,7 +22,7 @@ build:
 
 # Run in development mode with nodemon
 dev: start_up
-	bash ./run_mcp_server.sh; (exit_code=$$?; make shut_down; exit $$exit_code)
+	bash ./run_mcp_server.sh
 
 run: dev
 
@@ -33,7 +33,7 @@ shut_down:
 	bash ./link_common_assets.sh unlink
 
 run_mcp_inspector: start_up
-	MCP_INSPECTOR=1 bash ./run_mcp_server.sh; (exit_code=$$?; make shut_down; exit $$exit_code)
+	MCP_INSPECTOR=1 bash ./run_mcp_server.sh
 
 # Run in production mode
 start:
