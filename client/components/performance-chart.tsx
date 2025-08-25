@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LoadingError } from "@/components/ui/loading-error"
 import { usePerformance } from "@/hooks/api/useDashboard"
 import { BarChart3 } from "lucide-react"
+import { useMemo } from "react"
 
 interface PerformanceChartProps {
   className?: string
@@ -11,6 +12,20 @@ interface PerformanceChartProps {
 
 export function PerformanceChart({ className = "" }: PerformanceChartProps) {
   const { data: performance, loading, error, refetch } = usePerformance()
+
+  const chartData = useMemo(() => {
+    if (!performance || performance.length === 0) {
+      return []
+    }
+
+    return performance.map((item) => ({
+      category: item.category,
+      accuracy: item.accuracy * 100,
+      f1_score: item.f1_score * 100,
+      precision: item.precision * 100,
+      recall: item.recall * 100,
+    }))
+  }, [performance])
 
   const getStatusColor = (accuracy: number) => {
     if (accuracy >= 0.9) return "text-green-600"

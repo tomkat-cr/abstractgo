@@ -51,28 +51,28 @@ export default function MedicalDashboard() {
 
       <div className="p-6 space-y-6">
         {/* Overview Tab */}
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="classification" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="classification">Classification</TabsTrigger>
-            <TabsTrigger value="export">Export</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="export">Export</TabsTrigger>            
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             {/* Metrics Cards */}
             <MetricCard />
 
-            {/* Main Content Grid */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <ConfusionMatrix />
-              <PerformanceChart />
-            </div>
+            {/* Confusion Matrix - Full Width */}
+            <ConfusionMatrix />
 
-            {/* Analytics and Distribution */}
+            {/* Performance Chart and Distribution Analysis - Half Width Each */}
             <div className="grid gap-6 md:grid-cols-2">
-              <AnalyticsDashboard />
+              <PerformanceChart />
               <DistributionAnalysis />
             </div>
+
+            {/* Analytics Dashboard - Full Width */}
+            <AnalyticsDashboard />
           </TabsContent>
 
           <TabsContent value="classification" className="space-y-6">

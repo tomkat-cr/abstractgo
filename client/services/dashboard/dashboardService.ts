@@ -32,8 +32,8 @@ export class DashboardService {
   // Get metrics only
   async getMetrics(): Promise<DashboardMetrics> {
     try {
-      const response = await apiClient.get<MetricsApiResponse>(API_ENDPOINTS.DASHBOARD.METRICS)
-      return response.data
+      const response = await apiClient.get<DashboardMetrics>(API_ENDPOINTS.DASHBOARD.METRICS)
+      return response
     } catch (error) {
       console.error('Error fetching metrics:', error)
       throw error
@@ -43,8 +43,8 @@ export class DashboardService {
   // Get confusion matrix
   async getConfusionMatrix(): Promise<ConfusionMatrix> {
     try {
-      const response = await apiClient.get<ConfusionMatrixApiResponse>(API_ENDPOINTS.DASHBOARD.CONFUSION_MATRIX)
-      return response.data
+      const response = await apiClient.get<ConfusionMatrix>(API_ENDPOINTS.DASHBOARD.CONFUSION_MATRIX)
+      return response
     } catch (error) {
       console.error('Error fetching confusion matrix:', error)
       throw error
@@ -54,8 +54,8 @@ export class DashboardService {
   // Get performance by category
   async getPerformance(): Promise<CategoryPerformance[]> {
     try {
-      const response = await apiClient.get<PerformanceApiResponse>(API_ENDPOINTS.DASHBOARD.PERFORMANCE)
-      return response.data
+      const response = await apiClient.get<CategoryPerformance[]>(API_ENDPOINTS.DASHBOARD.PERFORMANCE)
+      return response
     } catch (error) {
       console.error('Error fetching performance data:', error)
       throw error
@@ -65,10 +65,14 @@ export class DashboardService {
   // Get distribution analysis
   async getDistribution(): Promise<CategoryDistribution[]> {
     try {
-      const response = await apiClient.get<DistributionApiResponse>(API_ENDPOINTS.DASHBOARD.DISTRIBUTION)
-      return response.data
+      const response = await apiClient.get<CategoryDistribution[]>(API_ENDPOINTS.DASHBOARD.DISTRIBUTION)
+      
+      // Manejar caso donde la respuesta es directamente el array
+      const distributionData = response.data || response
+      
+      return distributionData
     } catch (error) {
-      console.error('Error fetching distribution data:', error)
+      console.error('🔍 DashboardService: Error fetching distribution data:', error)
       throw error
     }
   }
@@ -76,10 +80,10 @@ export class DashboardService {
   // Get analytics data
   async getAnalytics(): Promise<AnalyticsData> {
     try {
-      const response = await apiClient.get<AnalyticsApiResponse>(API_ENDPOINTS.DASHBOARD.ANALYTICS)
-      return response.data
+      const response = await apiClient.get<AnalyticsData>(API_ENDPOINTS.DASHBOARD.ANALYTICS)
+      return response
     } catch (error) {
-      console.error('Error fetching analytics data:', error)
+      console.error('🔍 DashboardService: Error fetching analytics data:', error)
       throw error
     }
   }

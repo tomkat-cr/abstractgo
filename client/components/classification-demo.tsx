@@ -143,24 +143,19 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
   }
 
   const handleFileUpload = async (file: File) => {
-    console.log('File selected:', file.name, file.type, file.size)
-
     try {
       const extractedData = await uploadPDF(file)
-      console.log('PDF extraction result:', extractedData)
       
       // Automatically classify the extracted content
       if (extractedData && extractedData.title && extractedData.abstract) {
-        console.log('Extraction successful, starting classification...')
         await predict({
           title: extractedData.title,
           abstract: extractedData.abstract,
         })
       } else {
-        console.log('Extraction failed - missing title or abstract:', extractedData)
+        // Error is handled by the hook
       }
     } catch (error) {
-      console.error('Error in handleFileUpload:', error)
       // Error is handled by the hook
     }
   }
@@ -218,7 +213,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
           <div className="space-y-4">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 border-b border-gray-200 dark:border-gray-700">
                 <TabsTrigger value="text">Text Input</TabsTrigger>
                 <TabsTrigger value="pdf">PDF Upload</TabsTrigger>
               </TabsList>
