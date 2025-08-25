@@ -273,3 +273,7 @@ dist
 
 # SSL Certificates
 mkcert-*
+
+# Deploy
+deploy/docker-compose.yml
+deploy/nginx.conf

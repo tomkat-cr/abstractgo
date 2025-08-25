@@ -66,3 +66,6 @@ ssl-certs-creation:
 	
 branch-update:
 	bash ./scripts/branch_update_from_main.sh
+
+init-app-environment:
+	bash ./scripts/init_app_environment.sh
