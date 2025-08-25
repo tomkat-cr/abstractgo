@@ -299,7 +299,7 @@ def dashboard_classification_history_tool() -> dict[str, str]:
         .get_dashboard_classification_history()
 
 
-def authenticatation_tool(api_key: str) -> dict[str, str]:
+def authentication_tool(api_key: str) -> dict[str, str]:
     """
     Authenticate the user.
     """

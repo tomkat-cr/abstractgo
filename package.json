@@ -5,16 +5,18 @@
   "private": true,
   "workspaces": [
     "server",
-    "client"
+    "client",
+    "mcp-server"
   ],
   "scripts": {
     "dev": "concurrently -k \"npm:dev:*\"",
     "dev:server": "npm --workspace server run dev",
     "dev:client": "npm --workspace client run dev",
-    "build": "npm -w client run build:from_root && npm -w server run build",
+    "dev:mcp-server": "npm --workspace mcp-server run dev",
+    "build": "npm -w client run build:from_root && npm -w server run build && npm -w mcp-server run build",
     "start": "npm -w server run start:from_root",
-    "install:all": "npm install && npm -w server run api:install && npm -w client npm install",
-    "clean": "npm -w server run clean && npm -w client run clean && rm -rf node_modules"
+    "install:all": "npm install && npm -w mcp-server run api:install && npm -w server run api:install && npm -w client install",
+    "clean": "npm -w server run clean && npm -w client run clean && npm -w mcp-server run clean && rm -rf node_modules"
   },
   "keywords": [
     "ai",

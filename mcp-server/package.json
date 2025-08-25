@@ -1,0 +1,12 @@
+{
+  "name": "abstractgo-mcp-server",
+  "type": "module",
+  "main": "mcp_server.py",
+  "scripts": {
+    "dev": "make dev",
+    "start": "make start",
+    "clean": "make clean",
+    "build": "make build",
+    "api:install": "make install && make build"
+  }
+}
