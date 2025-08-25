@@ -303,7 +303,7 @@ def authentication_tool(api_key: str) -> dict[str, str]:
     """
     Authenticate the user.
     """
-    if api_key != os.environ.get("API_KEY"):
+    if api_key != os.environ.get("AG_API_KEY"):
         return get_standard_response(
             error=True,
             status_code=401,

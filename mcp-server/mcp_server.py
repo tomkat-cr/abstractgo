@@ -116,22 +116,6 @@ def mcp_authenticate(
     return resource_result(result, mime_type="application/json")
 
 
-def verify_app_context(
-    app: MCPServerApp,
-    cac_object_list: list
-):
-    """
-    Verify the app context
-    """
-    if not app.get_authenticated():
-        raise ValueError("User not authenticated")
-    else:
-        result = app.authenticate(api_key=os.environ.get("AG_API_KEY"))
-        if result["error"]:
-            raise ValueError(result["error_message"])
-    return True
-
-
 # ============================================================================
 # MCP TOOLS - USER AUTHENTICATION
 # ============================================================================
