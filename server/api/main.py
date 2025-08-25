@@ -26,9 +26,17 @@ from .endpoint_methods import (
     dashboard_analytics_tool,
     dashboard_classification_history_tool,
 )
+from .utilities import log_info
 
 PDFREAD_USE_URL = os.environ.get("PDFREAD_USE_URL", "0") == "1"
 
+ml_model = MLModels()
+
+ai_model_params = {}
+ai_model = AIModels(params=ai_model_params)
+
+dashboard_metrics_handler = StaticDashboardMetrics()
+dashboard_metrics_from_db_handler = DashboardMetricsFromDb()
 
 # Initialize the FastAPI application
 app = FastAPI(title="Biomedical Article Classifier API")
@@ -42,14 +50,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ml_model = MLModels()
-
-ai_model_params = {}
-ai_model = AIModels(params=ai_model_params)
-
-dashboard_metrics_handler = StaticDashboardMetrics()
-dashboard_metrics_from_db_handler = DashboardMetricsFromDb()
-
+log_info(f"API ready. CORS_ORIGIN: {CORS_ORIGIN}")
 
 @app.get("/")
 def read_root() -> dict[str, str]:
