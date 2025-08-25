@@ -1,0 +1,15 @@
+{
+  "mcp": {
+    "servers": {
+      "abstractgo": {
+        "command": "sh",
+        "args": [
+          "/absolute/path/to/abstractgo/mcp-server/run_mcp_server.sh"
+        ],
+        "env": {
+          "AG_API_KEY": "ag-api-key-123"
+        }
+      }
+    }
+  }
+}

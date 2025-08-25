@@ -21,6 +21,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
   - [Installation](#installation)
 - [Usage](#usage)
   - [Development Mode](#development-mode)
+  - [MCP Server](#mcp-server-usage)
   - [Production Mode](#production-mode)
   - [Available Make Commands](#available-make-commands)
 - [API Endpoints](#api-endpoints)
@@ -36,12 +37,15 @@ AbstractGo is an AI/ML system that classifies biomedical literature using only t
 
 ## Features
 
-- **Model-powered classification**: FastAPI endpoint that scores input title+abstract with a Transformers pipeline (`text-classification`).
-- **Interactive dashboard**: Next.js UI with metrics, confusion matrix, category distributions, performance trends, and a demo component.
+- **Model-powered classification**: API and MCP server that scores input title+abstract with a Transformers Hugging Face model (`text-classification`) based on BioBERT.
+- **Interactive dashboard**: UI with metrics, confusion matrix, category distributions, performance trends, and a demo component to interact with the model and API.
+- **MCP server**: MCP-compliant server based on FastAPI that serves the model and the dashboard with the same resources and tools as the API. For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
+- **Vercel V0 Chat**: [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) with the UI vibe coding development. Visit this [url](https://v0.app/chat/abstract-go-rrzvfQyOCKc) to try it out.
+- **Google Colab Notebooks**: [notebooks/](./notebooks/) with the model training notebooks. Visit this [url](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) to try it out.
 - **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API.
-- **Local SSL support**: Make target creates self-signed certs for local HTTPS testing (`scripts/local_ssl_certs_creation.sh`).
+
 - **Monorepo workflow**: Root `Makefile` orchestrates client and server tasks; npm workspaces for script aggregation.
-- **Reproducible Python envs**: Managed with Poetry (`server/pyproject.toml`) and exportable `requirements.txt` for Docker.
+
 
 ## Technologies
 
@@ -50,6 +54,12 @@ AbstractGo is an AI/ML system that classifies biomedical literature using only t
 - **FastAPI** (0.116.x)
 - **Transformers** (4.55.x) with a BioBERT tokenizer
 - **Uvicorn** (ASGI server)
+- **Poetry** (dependency and environment management)
+
+### MCP Server
+- **MCP** (1.13.x)
+- **FastAPI** (0.116.x)
+- **Transformers** (4.55.x) with a BioBERT tokenizer
 - **Poetry** (dependency and environment management)
 
 ### Frontend
@@ -102,14 +112,26 @@ NEXT_PUBLIC_DEBUG=0
 
 **Server `.env`:**
 ```bash
-SERVER_DEBUG=1
+SERVER_DEBUG=0
 PORT=8000
 APP_DOMAIN_NAME=localhost
 CORS_ORIGIN=http://${APP_DOMAIN_NAME}
-APP_NAME="AbstractGo"
-ORG_NAME="Melo-Dramatic Data Team"
-ADMIN_USERNAME=username
-ADMIN_PASSWORD=password
+LLM_PROVIDER="openai"
+LLM_MODEL="gpt-5-nano"
+OPENAI_API_KEY=sk-proj-1234567890
+```
+
+**MCPServer `.env`:**
+```bash
+SERVER_DEBUG=0
+PORT=8000
+APP_DOMAIN_NAME=localhost
+CORS_ORIGIN=http://${APP_DOMAIN_NAME}
+LLM_PROVIDER="openai"
+LLM_MODEL="gpt-5-nano"
+OPENAI_API_KEY=sk-proj-1234567890
+AG_API_KEY=ag-api-key-123... # Set an API key to restrict the MCP server use
+MCP_INSPECTOR=0 # Set to 1 to use the MCP Inspector
 ```
 
 4. **Generate SSL certificates**
@@ -127,6 +149,36 @@ make ssl-certs-creation
 ```bash
 make run
 ```
+
+<br>
+
+![AbstractGo Banner](./assets//abstractgo.banner.010.jpeg)
+
+**Enter the Web UI**
+
+- Load your preferred web browser
+- Go to [http://localhost:3000](http://localhost:3000)
+
+<br>
+
+![AbstractGo MCP Server Banner](./mcp-server/assets/abstractgo.mcp.server.banner.010.jpeg)
+
+### MCP Server Usage
+
+The **MCP server** serves the ML model and the dashboard with the same resources and tools as the API.
+
+For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
+
+You can use the MCP Inspector to test the server.
+
+```bash
+cd mcp-server
+make run_mcp_inspector
+```
+
+### Other Development Mode commands
+
+* With Docker
 
 **Restart services:**
 ```bash
@@ -153,31 +205,24 @@ cd server
 make dev
 ```
 
-**Start the client (in another terminal):**
+**Start the client (in a new terminal):**
 ```bash
 cd client
 make dev
+```
+
+**Start the MCP server (in a new terminal):**
+```bash
+cd mcp-server
+make run
 ```
 
 ### Production Mode
 
 **Build the client:**
 ```bash
-cd client
-make build
+make run
 ```
-
-**Start the server:**
-```bash
-cd server
-make start
-```
-
-**Enter the system**
-
-- Load your preferred web browser
-- Go to [http://localhost:3000](http://localhost:3000)
-
 
 ### Available Make Commands
 
@@ -307,6 +352,11 @@ In `server/.env`:
 APP_DOMAIN_NAME=abstractgo.dev
 CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 ```
+
+## Links to Notebooks and other resources
+
+- [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
+- [Model Training Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
 
 ## Project Structure
 

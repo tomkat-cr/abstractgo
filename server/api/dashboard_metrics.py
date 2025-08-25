@@ -147,6 +147,7 @@ class StaticDashboardMetrics(BaseDashboardMetrics):
         Get the dashboard distribution.
         """
         result = []
+        total_predictions_all_cats = self.get_total_predictions()
         for category in self.cm.keys():
             result.append({
                 "category": category,
@@ -155,7 +156,7 @@ class StaticDashboardMetrics(BaseDashboardMetrics):
                 "percentage": (
                     self.cm[category][0][0] + self.cm[category][0][1] +
                     self.cm[category][1][0] + self.cm[category][1][1]
-                ) / self.get_total_predictions() * 100,
+                ) / total_predictions_all_cats * 100,
                 "trend": 0,
             })
         return result

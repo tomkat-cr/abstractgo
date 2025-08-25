@@ -18,7 +18,7 @@ perform_curl() {
   fi
 }
 
-echo "Testing predict endpoint..."
+echo "Testing AbstractGo API endpoints..."
 
 echo ""
 echo "Root:"

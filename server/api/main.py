@@ -1,6 +1,4 @@
 import os
-import base64
-import json
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Body
@@ -10,16 +8,24 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .ai_models import AIModels
 from .ml_models import MLModels
-from .json_models import get_all_training_metrics
 from .types import Metrics, Prediction, Article
-from .utilities import (
-    SERVER_DEBUG as DEBUG,
-    remove_temp_file,
-    get_temp_random_file_path
-)
 from .dashboard_metrics import StaticDashboardMetrics
 from .dashboard_metrics_from_db import DashboardMetricsFromDb
-
+from .endpoint_methods import (
+    read_root_tool,
+    training_metrics_tool,
+    predict_tool,
+    pdfread_tool,
+    ai_model_params_tool,
+    get_assets_tool,
+    health_tool,
+    dashboard_metrics_tool,
+    dashboard_confusion_matrix_tool,
+    dashboard_performance_tool,
+    dashboard_distribution_tool,
+    dashboard_analytics_tool,
+    dashboard_classification_history_tool,
+)
 
 PDFREAD_USE_URL = os.environ.get("PDFREAD_USE_URL", "0") == "1"
 
@@ -46,23 +52,22 @@ dashboard_metrics_from_db_handler = DashboardMetricsFromDb()
 
 
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to AbstractGo: the Biomedical Classifier API"}
+def read_root() -> dict[str, str]:
+    return read_root_tool()
 
 
 @app.get("/training_metrics", response_model=Metrics)
-def training_metrics():
+def training_metrics() -> dict[str, str]:
     """
     Get the training metrics for the model.
     """
-    metrics = get_all_training_metrics()
-    return metrics
+    return training_metrics_tool()
 
 
 @app.post("/predict", response_model=list[Prediction])
 def predict(
     article: Article | None = Body(default=None),
-):
+) -> dict[str, str]:
     """
     Predict categories for a biomedical article.
 
@@ -70,33 +75,13 @@ def predict(
 
     Returns a JSON object with the predicted category and confidence.
     """
-
-    # if classifier is None:
-    if ml_model.model is None:
-        raise HTTPException(status_code=500, detail="Model not loaded")
-
-    # Resolve title and abstract from inputs
-    resolved_title = article.title.strip()
-    resolved_abstract = article.abstract.strip()
-
-    if DEBUG:
-        print("Article: ", article)
-        print(f"Resolved title: {resolved_title}")
-        print(f"Resolved abstract: {resolved_abstract}")
-
-    # Validate we have the necessary text
-    if not resolved_title and not resolved_abstract:
+    result = predict_tool(article)
+    if result.get("error"):
         raise HTTPException(
-            status_code=400,
-            detail="No input provided. Send JSON with title/abstract or"
-                   " upload a text file via multipart/form-data.",
+            status_code=result.get("status_code", 500),
+            detail=result.get("error_message", "Internal server error [010]")
         )
-
-    # Perform prediction
-    text = (resolved_title or "") + " " + (resolved_abstract or "")
-    predictions = ml_model.predict_infer(text)
-
-    return predictions["predicted_labels"]
+    return result.get("resultset")
 
 
 @app.post("/pdfread", response_model=Article)
@@ -136,114 +121,13 @@ def pdfread(
 
     file_name = file.filename
 
-    if PDFREAD_USE_URL:
-        temp_file_path = get_temp_random_file_path(file_name)
-        # Get only the filename from the temp file path
-        temp_file_name = os.path.basename(temp_file_path)
-        with open(temp_file_path, 'wb') as f:
-            f.write(raw_bytes)
-        temp_url = f"{os.environ.get('APP_DOMAIN_NAME')}"
-        temp_url += "/" \
-            if not os.environ.get('APP_DOMAIN_NAME').endswith("/") \
-            else ""
-        temp_url += "get_assets/" + temp_file_name
-        attachments = [
-            {
-                "file_name": temp_file_name,
-                "url": temp_url
-            }
-        ]
-    else:
-        temp_url = None
-
-        # Content must be in base64 format for OpenAI
-        content = base64.b64encode(raw_bytes).decode("utf-8")
-
-        if file_name and file_name.endswith(".pdf"):
-            attachment = f"data:application/pdf;base64,{content}"
-        elif file_name and (file_name.endswith(".txt") or
-                            file_name.endswith(".csv")):
-            attachment = f"data:text/plain;base64,{content}"
-        elif file_name and file_name.endswith(".docx"):
-            attachment = (
-                "data:application/vnd.openxmlformats"
-                "-officedocument.wordprocessingml.document;"
-                f"base64,{content}")
-        elif file_name and file_name.endswith(".doc"):
-            attachment = f"data:application/msword;base64,{content}"
-        elif file_name and file_name.endswith(".rtf"):
-            attachment = f"data:text/rtf;base64,{content}"
-        else:
-            print(f"Unsupported file type: {file_name}")
-            raise HTTPException(
-                status_code=400,
-                detail=f"Unsupported file type: {file_name}"
-            )
-        attachments = [
-            {
-                "file_name": file_name,
-                "url": None,
-                "file_data": attachment,
-            }
-        ]
-
-    if DEBUG:
-        print(f"File name: {file_name}")
-        print(f"File temp url: {temp_url}")
-        print(f"File attachments: {attachments}")
-
-    system_prompt = """
-    You are a helpful assistant that can read and understand text, PDF,
-    and other files.
-    You are given a file and you need to extract the title and abstract.
-    Figure out the language of the file and use the correct language for the
-    title and abstract.
-    Figure out the best way to extract the title and abstract from the file.
-    Return the title and abstract in the following JSON format:
-    {{
-        "title": "Title of the article",
-        "abstract": "Abstract of the article"
-    }}
-    """
-
-    user_prompt = """
-    Give me the title and abstract of the file
-    """
-
-    ai_model_response = ai_model.infer(
-        system=system_prompt,
-        query=user_prompt,
-        attachments=attachments
-    )
-
-    if DEBUG:
-        print("AI model response: ", ai_model_response)
-
-    if ai_model_response.get("text") and \
-       isinstance(ai_model_response["text"], str):
-        try:
-            ai_model_response["text"] = json.loads(ai_model_response["text"])
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail="Error parsing AI model response: " +
-                ai_model_response["text"] +
-                " | " + str(e)
-            )
-
-    response = {
-        "title": ai_model_response["text"].get("title", ""),
-        "abstract": ai_model_response["text"].get("abstract", "")
-    }
-
-    if DEBUG:
-        print("pdfread() - AI model response: ", ai_model_response)
-        print("pdfread() - Response: ", response)
-
-    if PDFREAD_USE_URL:
-        remove_temp_file(temp_file_path)
-
-    return response
+    result = pdfread_tool(raw_bytes, file_name)
+    if result.get("error"):
+        raise HTTPException(
+            status_code=result.get("status_code", 500),
+            detail=result.get("error_message", "Internal server error [011]")
+        )
+    return result.get("resultset")
 
 
 @app.get("/ai_model_params")
@@ -251,7 +135,7 @@ def ai_model_params():
     """
     Get the parameters for the AI model.
     """
-    return ai_model.model
+    return ai_model_params_tool()
 
 
 @app.get("/get_assets/{filename}", response_model=None)
@@ -267,21 +151,13 @@ def get_assets(
         Response | FileResponse | StreamingResponse: The object as streaming
             response or error response.
     """
-    if DEBUG:
-        print(f"get_assets() - filename: {filename}")
-
-    file_path = os.path.join('/tmp', os.path.basename(filename))
-    if DEBUG:
-        print(f"get_assets() - file_path: {file_path}")
-
-    if not os.path.exists(file_path):
-        if DEBUG:
-            print(f"get_assets() - file not found: {file_path}")
+    result = get_assets_tool(filename)
+    if result.get("error"):
         raise HTTPException(
-            status_code=404,
-            detail=f"File not found: {file_path}"
+            status_code=result.get("status_code", 500),
+            detail=result.get("error_message", "Internal server error [012]")
         )
-    return FileResponse(file_path)
+    return FileResponse(result.get("file_path"))
 
 
 @app.get("/health")
@@ -289,7 +165,7 @@ def health():
     """
     Health check endpoint.
     """
-    return {"status": "ok"}
+    return health_tool()
 
 
 @app.get("/dashboard/metrics")
@@ -297,7 +173,7 @@ def dashboard_metrics():
     """
     Dashboard metrics endpoint.
     """
-    return dashboard_metrics_handler.get_dashboard_metrics()
+    return dashboard_metrics_tool()
 
 
 @app.get("/dashboard/confusion-matrix")
@@ -305,7 +181,7 @@ def dashboard_confusion_matrix():
     """
     Dashboard confusion matrix endpoint.
     """
-    return dashboard_metrics_handler.get_dashboard_confusion_matrix()
+    return dashboard_confusion_matrix_tool()
 
 
 @app.get("/dashboard/performance")
@@ -313,7 +189,7 @@ def dashboard_performance():
     """
     Dashboard performance endpoint.
     """
-    return dashboard_metrics_handler.get_dashboard_performance()
+    return dashboard_performance_tool()
 
 
 @app.get("/dashboard/distribution")
@@ -321,7 +197,7 @@ def dashboard_distribution():
     """
     Dashboard distribution endpoint.
     """
-    return dashboard_metrics_handler.get_dashboard_distribution()
+    return dashboard_distribution_tool()
 
 
 @app.get("/dashboard/analytics")
@@ -329,8 +205,7 @@ def dashboard_analytics():
     """
     Dashboard analytics endpoint.
     """
-    return dashboard_metrics_from_db_handler \
-        .get_dashboard_analytics()
+    return dashboard_analytics_tool()
 
 
 @app.get("/dashboard/classification-history")
@@ -338,5 +213,4 @@ def dashboard_classification_history():
     """
     Dashboard classification history endpoint.
     """
-    return dashboard_metrics_from_db_handler \
-        .get_dashboard_classification_history()
+    return dashboard_classification_history_tool()

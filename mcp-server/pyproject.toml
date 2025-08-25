@@ -1,0 +1,26 @@
+[project]
+name = "mcp-server"
+version = "1.0.0"
+description = "MCP Server for the AbstractGo app"
+authors = [
+    {name = "Carlos J. Ramirez", email = "tomkat_cr@yahoo.com"},
+    {name = "Iver Johan Incapie", email = "iver.hincapie@gmail.com"},
+    {name = "Alejandro Arroyave Perez", email = "alejo5600@gmail.com"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "transformers (>=4.55.3,<5.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "torch (>=2.8.0,<3.0.0)",
+    "litellm (>=1.75.9,<2.0.0)",
+    "safetensors (>=0.6.2,<0.7.0)",
+    "peft (>=0.17.1,<0.18.0)",
+    "fastmcp (>=2.11.3,<3.0.0)",
+]
+
+[tool.poetry]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
