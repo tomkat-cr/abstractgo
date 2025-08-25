@@ -14,7 +14,7 @@ install_mcp_server_dependencies() {
 }
 
 run_server() {
-    cd /code && uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /code --env-file /code/.env
+    cd /code && uvicorn api.main:app --host 0.0.0.0 --port 8000 --env-file /code/.env
 }
 
 run_mcp_server() {

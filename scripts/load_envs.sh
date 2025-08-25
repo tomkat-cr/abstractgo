@@ -24,8 +24,8 @@ load_env_file() {
     set -o allexport; . $env_file; set +o allexport ;
 }
 
-SCRIPT_DIR_DIR=$(dirname "$0")
-BASE_DIR="$SCRIPT_DIR_DIR/.."
+SCRIPT_DIR=$(dirname "$0")
+BASE_DIR="$SCRIPT_DIR/.."
 
 if [ -z "$1" ]; then
     check_directories "client"

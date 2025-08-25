@@ -33,8 +33,8 @@ check_directories() {
     fi
 }
 
-SCRIPT_DIR_DIR=$(dirname "$0")
-BASE_DIR="$SCRIPT_DIR_DIR/.."
+SCRIPT_DIR=$(dirname "$0")
+BASE_DIR="$SCRIPT_DIR/.."
 
 check_directories "client"
 check_directories "server"
