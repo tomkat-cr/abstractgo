@@ -93,7 +93,7 @@ Add this configuration to your `claude_desktop_config.json` to run it locally:
 }
 ```
 
-
+<!--
 To run the local live version, use the following configuration:
 ```json
 {
@@ -107,7 +107,7 @@ To run the local live version, use the following configuration:
   }
 }
 ```
-
+-->
 ### VS Code MCP Extension
 
 Add to your VS Code settings or `.vscode/mcp.json`:
@@ -130,7 +130,9 @@ Add to your VS Code settings or `.vscode/mcp.json`:
 }
 ```
 
-NOTE: Set the `AG_API_KEY` environment variable to your AbstractGo API key in the server's `env` section.
+NOTES:
+- Set the `AG_API_KEY` environment variable to your AbstractGo API key in the server's `env` section.
+- When you configure the MCP server in clientes like VS Code, Cursor or Claude Desktop, you must do the [installation](#installation) step but the server doesn't need to be started.
 
 ## Usage Examples
 
