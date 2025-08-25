@@ -5,7 +5,6 @@ A Model Context Protocol server that exposes the AbstractGo API.
 Based on the AbstractGo's server/api/main.py
 """
 import os
-from datetime import datetime
 import json
 from typing import Dict, Any
 
@@ -31,6 +30,7 @@ from lib.api.endpoint_methods import (
 
 from lib.api.utilities import (
     get_standard_response,
+    log_info,
 )
 from lib.api.types import Article
 
@@ -64,14 +64,6 @@ mcp = app.mcp
 # ============================================================================
 # UTILITIES
 # ============================================================================
-
-
-def log_info(message: str):
-    """
-    Log information message
-    """
-    date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{date_time} - {message}")
 
 
 def tool_result(result: str, other_data: dict = None) -> Dict[str, Any]:

@@ -85,10 +85,14 @@ Before running this project, make sure you have the following installed:
 
 - [Docker](https://docs.docker.com/engine/install/) to run the server with containers
 - [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) (better) or [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (version 18.0.0 or higher)
+- [Poetry](https://python-poetry.org/docs/#installation) (to manage the dependencies).
 - [Python](https://www.python.org/downloads/) (version > 3.11.0, < 3.14) if you plan to run the server locally without containers
 - [Git](https://git-scm.com/downloads) (to clone the repository)
 - Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) to run the automated commands
 - [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) to use the the PDF upload feature and other LLM integrations
+
+NOTES:
+- After install poetry, run `poetry self add poetry-plugin-export` to install its dependencies.
 
 ### Installation
 
@@ -281,8 +285,15 @@ make run
 
 ### Production Mode
 
-**Build the client:**
+**Prepare the server**
+
+You need to install the [pre-requisites](#prerequisites) and the [environment variables](#installation).
+
+To install Docker and set a global Nginx Proxy, you can check the [GenericSuite Gitops](https://github.com/tomkat-cr/genericsuite-gitops) repository that has a solution for this.
+
+**Build and run the complete stack:**
 ```bash
+make install
 make run
 ```
 
