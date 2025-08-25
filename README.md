@@ -33,7 +33,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 ## Description
 
-AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a **text-classification** ML model (base [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1) with LoRA fine-tuning placed in [https://huggingface.co/Hiver77/MDT](https://huggingface.co/Hiver77/MDT)) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: **Cardiovascular, Neurological, Hepatorenal, and Oncological**.
+AbstractGo is an intelligent AI/ML system designed to classify biomedical literature using only article titles and abstracts as input. The system features streamlined FastAPI and FastMCP backends that serves a sophisticated **text-classification** ML model—built on [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1) with LoRA fine-tuning ([Hiver77/MDT](https://huggingface.co/Hiver77/MDT)) and hosted on [Hugging Face](https://huggingface.co). Complementing the backend is a modern Next.js dashboard that provides comprehensive insights through model performance metrics, confusion matrices, category distributions, and an interactive demo playground. The solution specializes in multi-label classification across four critical medical domains: **Cardiovascular, Neurological, Hepatorenal, and Oncological**.
 
 ## Features
 
@@ -94,7 +94,7 @@ Before running this project, make sure you have the following installed:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/otobonh/abstractgo.git
+git clone https://github.com/tomkat-cr//abstractgo.git
 cd abstractgo
 ```
 
@@ -363,12 +363,12 @@ APP_DOMAIN_NAME=abstractgo.dev
 CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 ```
 
-## Links to Notebooks and other resources
+## Resources Links 
 
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
-- [Model Training Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
-- [Model in Hugging Face](https://huggingface.co/Hiver77/MDT)
-- [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test PDF upload](./server/test/curl_tests.sh)
+- [Google Colab Notebook for Model Training](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
+- [Model hosting in Hugging Face](https://huggingface.co/Hiver77/MDT)
+- [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test](./server/test/curl_tests.sh) the PDF upload and classification
 
 ## Project Diagrams
 
@@ -384,8 +384,8 @@ flowchart TD
     D --> E[Training & Validation]
     E --> F[API Development]
     F --> G[Client Interface Development with V0 Chat]
-    G --> H[Visual Design development]
-    H --> I[MCP Server Development]
+    G --> H[MCP Server Development]
+    H --> I[Visual Design development]
     I --> J[Integration & Testing]
     J --> K[Final Report & Presentation development]
     K --> L[Deployment]
@@ -397,8 +397,8 @@ flowchart TD
     D --> D1[Hugging Face Models]
     D --> D2[Custom Fine-tuning]
 
-    H --> H1[Logo design with AI]
-    H --> H2[Banners design with AI]
+    I --> I1[Logo design with AI]
+    I --> I2[Banners design with AI]
 ```
 
 ### Enhanced System Flow
@@ -427,6 +427,7 @@ This diagram shows the full technical architecture with all layers and component
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
+        M[MCP Client]
         A[Next.js Client]
         B[React Components]
         C[UI Components]
@@ -451,7 +452,8 @@ graph TB
     end
     
     A --> D
-    A --> E
+    M --> E
+    E --> F
     D --> G
     E --> G
     G --> H
@@ -465,14 +467,16 @@ The basic interaction flow between components:
 
 ```mermaid
 flowchart
-    A[Client] --> B[Server]
-    A[Client] --> C[MCP Server]
-    B --> D[Hugging Face Model]
-    C --> D[Hugging Face Model]
-    D --> E[Model]
-    E --> F[API]
-    F --> G[Client]
-    G --> H[Dashboard]
+    A[Web Client] --> B[Server]
+    C[MCP Client] --> D[MCP Server]
+   
+    B --> E[Hugging Face Model]
+    D --> E[Hugging Face Model]
+
+    E --> F[Model]
+    F --> G[API or MCP Server]
+    G --> H[Client or MCP Client]
+    H --> I[Dashboard]
 ```
 
 ### Docker Deployment Architecture
@@ -574,32 +578,32 @@ Given a medical article, your system must correctly classify whether it belongs 
 
 ## Tools and Services
 
-- [Vercel V0](https://v0.app)
-- [Hugging Face](https://huggingface.co/)
-- [OpenAI ChatGPT](https://chatgpt.com/)
-- [Google Gemini](https://gemini.google.com/)
-- [Anthropic Claude](https://www.anthropic.com/)
-- [Google Colab](https://colab.research.google.com/)
-- [OpenAI API](https://platform.openai.com/docs/api-reference) with [GPT-5](https://openai.com/gpt-5/)
-- [AI/ML API](https://aimlapi.com/) with [GPT-4o](https://aimlapi.com/models)
-- [LiteLLM](https://github.com/BerriAI/litellm)
-- [Cursor](https://www.cursor.com/)
-- [Windsurf](https://windsurf.ai/)
+- [Vercel V0](https://v0.app): generate the UI design and the code for the dashboard.
+- [Hugging Face](https://huggingface.co/): host the model and the training data.
+- [OpenAI ChatGPT](https://chatgpt.com/): initial triage of all the project concept and tasks (the poorest answers), image generation (the best ones).
+- [Google Gemini](https://gemini.google.com/): initial triage of all the project concept and tasks (it gave us the most complete and detailed answers), image generation (not so good).
+- [Anthropic Claude](https://www.anthropic.com/): initial triage of all the project concept and tasks (good answers that allowed us to compare and choose the best approach).
+- [Google Colab](https://colab.research.google.com/): train the model and fine-tune it.
+- [OpenAI API](https://platform.openai.com/docs/api-reference) with [GPT-5](https://openai.com/gpt-5/): use the API to analyce the PDF content.
+- [AI/ML API](https://aimlapi.com/) with [GPT-4o](https://aimlapi.com/models): use the API to analyce the PDF content with different LLMs.
+- [LLMarena](https://llmarena.com/): image generation comparing different models. The current logo was generated with this tool.
+- [LiteLLM](https://github.com/BerriAI/litellm): use as generic LLM API client so not indivual implementation was suppose to be needed, but at the end it behave not so good handling the attachments. The idea was not to use LangChain because it's heavier, and we wantend a lightweight solution.
+- [Cursor](https://www.cursor.com/): use to help generating all the code. Definitively the best tool for this project because of its accuracy and speed.
+- [Windsurf](https://windsurf.ai/): use to help generating all the code. It's slower than Cursor, but it's a good and kind of cheaper alternative (USD 10 or 15/month vs USD 20/month for Cursor) and both are always trying to deliver the best innovations.
 
 ## Future Features
 
 - Fix the README of the model [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
 - Verify why the model returns weights for non-sensical data, like title="test" and abstract="test"
-- Let a AI model evaluate the model performance and accuracy during the classification queries and.
+- Let a AI model evaluate the model performance and accuracy during the classification queries and suggest improvements
+- Fix the MCP server so it can be used as SSE (Server-Sent Events) by MCP clients.
+- Make the LiteLLM and AI/ML API work with the PDF upload and classification with different AI models
 - Add a Database (e.g. Mongodb) in deploy docker composer or use a cloud database
 - Add the database to the API and MCP server
 - Make the API / MCP server endpoints for the historical data maintenance and consumption. The historical data will be populated with the data from the clasification queries.
 - Re-enable the historical data in the dashboard
 - Automate the model training and fine-tuning with a CI/CD pipeline and the automatic generation of the [model_training_data.json](./server/data/model_training_data.json) file used in the dashboard.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+- Implement better authentication and authorization for the API and MCP, JWT tokens, API Keys handling and user management with a solution like [GenericSuite](https://genericsuite.carlosjramirez.com/).
 
 ## Contributing
 
@@ -608,8 +612,13 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+6. Create an [issue](https://github.com/tomkat-cr//abstractgo/issues) to discuss changes, request features, report bugs, etc.
 
 Please make sure to update tests as appropriate and follow the existing code style.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Credits
 
