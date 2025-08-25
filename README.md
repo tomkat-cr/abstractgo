@@ -11,6 +11,8 @@
 
 AbstractGo is an AI/ML solution for medical investigation classification based on title and abstracts.
 
+Check the [Final Report](./documentation/FINAL-REPORT.md) for more details.
+
 ## Table of Contents
 
 - [Description](#description)
@@ -42,7 +44,7 @@ AbstractGo is an intelligent AI/ML system designed to classify biomedical litera
 - **MCP server**: MCP-compliant server based on FastAPI that serves the model and the dashboard with the same resources and tools as the API. For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
 - **PDF upload**: API and MCP server has the ability to score input PDF with a [OpenAI API](https://platform.openai.com/docs/api-reference/files) to extract the title and abstract.
 - **Vercel V0 Chat**: [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) with the UI vibe coding development. Visit this [url](https://v0.app/chat/abstract-go-rrzvfQyOCKc) to try it out.
-- **Model Training Analysis**: in this [README](./notebooks/README.md) file there's the complete model training analysis and the [notebook](./notebooks/AbstractGo_Final_Training_Model.ipynb) has the off-line training steps. The model training datasets are in the [/data/raw](./data/raw) directory.
+- **Model Training Analysis**: in this [README](./notebooks/README-ML.md) file there's the complete model training analysis and the [notebook](./notebooks/AbstractGo_Final_Training_Model.ipynb) has the off-line training steps. The model training datasets are in the [/data/raw](./data/raw) directory.
 - **Jupiter and Google Colab Notebooks**: [notebooks](./notebooks) directory with the model training Jupiter notebook. Visit this [Google Colab notebook url](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) to check the live step-by-step instructions we run to train the model.
 - **Batch Classification**: [data-scripts/Test_model.py](./data-scripts/Test_model.py) script to batch-classify medical articles from a [CSV file](./data/raw/test.csv).
 - **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API, and production-ready for servers with containerized deployment.
@@ -444,35 +446,6 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 - [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test](./server/test/curl_tests.sh) the PDF upload and classification
 
 ## Project Diagrams
-
-### Solution Design Process
-
-This diagram shows how we approached the biomedical article classification challenge, from initial research to final deployment:
-
-```mermaid
-flowchart TD
-    A[Challenge: Biomedical Article Classification] --> B[Research Phase]
-    B --> C[Data Analysis]
-    C --> D[Model Selection]
-    D --> E[Training & Validation]
-    E --> F[API Development]
-    F --> G[Client Interface Development with V0 Chat]
-    G --> H[MCP Server Development]
-    H --> I[Visual Design development]
-    I --> J[Integration & Testing]
-    J --> K[Final Report & Presentation development]
-    K --> L[Deployment]
-    
-    B --> B1[Literature Review]
-    B --> B2[Existing Solutions Analysis]
-    C --> C1[Data Preprocessing]
-    C --> C2[Feature Engineering]
-    D --> D1[Hugging Face Models]
-    D --> D2[Custom Fine-tuning]
-
-    I --> I1[Logo design with AI]
-    I --> I2[Banners design with AI]
-```
 
 ### Enhanced System Flow
 
