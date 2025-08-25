@@ -24,7 +24,7 @@ load_env_file() {
     set -o allexport; . $env_file; set +o allexport ;
 }
 
-SCRIPT_DIR=$(dirname "$0")
+SCRIPT_DIR=$(cd `dirname "$0"` && pwd)
 BASE_DIR="$SCRIPT_DIR/.."
 
 if [ -z "$1" ]; then
