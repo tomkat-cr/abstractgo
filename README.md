@@ -1,4 +1,4 @@
-# Abstractgo
+# AbstractGo
 
 ![AbstractGo](./assets/abstractgo.logo.010.png)
 
@@ -33,7 +33,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 ## Description
 
-AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a text-classification model (BioBERT with LoRA fine-tuning placed under `saved_models/biobert-lora/`) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: Cardiovascular, Neurological, Hepatorenal, and Oncological.
+AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a text-classification model (BioBERT with LoRA fine-tuning placed in [https://huggingface.co/Hiver77/MDT](https://huggingface.co/Hiver77/MDT)) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: Cardiovascular, Neurological, Hepatorenal, and Oncological.
 
 ## Features
 
@@ -357,6 +357,7 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
 - [Model Training Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
+- [Model in Hugging Face](https://huggingface.co/Hiver77/MDT)
 
 ## Project Structure
 
