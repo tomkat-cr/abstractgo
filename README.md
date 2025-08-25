@@ -33,15 +33,16 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 ## Description
 
-AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a text-classification model (BioBERT with LoRA fine-tuning placed in [https://huggingface.co/Hiver77/MDT](https://huggingface.co/Hiver77/MDT)) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: Cardiovascular, Neurological, Hepatorenal, and Oncological.
+AbstractGo is an AI/ML system that classifies biomedical literature using only the article title and abstract. It exposes a minimal FastAPI backend that serves a **text-classification** ML model (base [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1) with LoRA fine-tuning placed in [https://huggingface.co/Hiver77/MDT](https://huggingface.co/Hiver77/MDT)) and a modern Next.js dashboard that showcases model performance, confusion matrices, category distributions, and a demo playground. The solution targets multi-label assignment across four domains: **Cardiovascular, Neurological, Hepatorenal, and Oncological**.
 
 ## Features
 
-- **Model-powered classification**: API and MCP server that scores input title+abstract with a Transformers Hugging Face model (`text-classification`) based on BioBERT.
+- **Model-powered classification**: API and MCP server that scores input title+abstract with a [Transformers Hugging Face model](https://huggingface.co/Hiver77/MDT) (`text-classification`) based on [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1).
 - **Interactive dashboard**: UI with metrics, confusion matrix, category distributions, performance trends, and a demo component to interact with the model and API.
 - **MCP server**: MCP-compliant server based on FastAPI that serves the model and the dashboard with the same resources and tools as the API. For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
 - **Vercel V0 Chat**: [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) with the UI vibe coding development. Visit this [url](https://v0.app/chat/abstract-go-rrzvfQyOCKc) to try it out.
-- **Google Colab Notebooks**: [notebooks/](./notebooks/) with the model training notebooks. Visit this [url](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) to try it out.
+- **Model Training Analysis**: in this [README](./notebooks/README.md) file there's the complete model training analysis and the [notebook](./notebooks/AbstractGo_Final_Training_Model.ipynb) has the off-line training steps. The model training datasets are in the [/data/raw](./data/raw) directory.
+- **Jupiter and Google Colab Notebooks**: [notebooks](./notebooks) directory with the model training Jupiter notebook. Visit this [Google Colab notebook url](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) to check the live step-by-step instructions we run to train the model.
 - **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API.
 
 - **Monorepo workflow**: Root `Makefile` orchestrates client and server tasks; npm workspaces for script aggregation.
@@ -82,7 +83,7 @@ Before running this project, make sure you have the following installed:
 
 - [Docker](https://docs.docker.com/engine/install/) (to run the server locally)
 - [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) (better) or [Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (version 18.0.0 or higher)
-- [Python](https://www.python.org/downloads/) (version 3.11.0 or higher)
+- [Python](https://www.python.org/downloads/) (version > 3.11.0, < 3.14)
 - [Git](https://git-scm.com/downloads) (to clone the repository)
 - Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) (to run the Makefile)
 
@@ -143,40 +144,40 @@ make ssl-certs-creation
 
 ### Development Mode
 
-* With Docker
+* With Docker containers running the full stack
 
-**Start client and server simultaneously:**
+**Start client and servers simultaneously:**
 ```bash
 make run
 ```
 
 <br>
 
-![AbstractGo Banner](./assets//abstractgo.banner.010.jpeg)
+## Web UI / Dashboard
 
-**Enter the Web UI**
+![AbstractGo Banner](./assets//abstractgo.banner.010.jpeg)
 
 - Load your preferred web browser
 - Go to [http://localhost:3000](http://localhost:3000)
 
 <br>
 
-![AbstractGo MCP Server Banner](./mcp-server/assets/abstractgo.mcp.server.banner.010.jpeg)
+## MCP Server Usage
 
-### MCP Server Usage
+![AbstractGo MCP Server Banner](./mcp-server/assets/abstractgo.mcp.server.banner.010.jpeg)
 
 The **MCP server** serves the ML model and the dashboard with the same resources and tools as the API.
 
-For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
+For instructions to run the MCP Server and configure the MCP clients, see the [MCP README](./mcp-server/README.md).
 
 You can use the MCP Inspector to test the server.
 
 ```bash
 cd mcp-server
-make run_mcp_inspector
+make run-mcp-inspector
 ```
 
-### Other Development Mode commands
+## Other Development Mode commands
 
 * With Docker
 
@@ -286,7 +287,7 @@ Endpoints:
 
 - **POST /predict** or **POST /api/predict**
 
-  - Body (JSON):
+  - Example with the API directly (port 8000):
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
@@ -296,7 +297,7 @@ curl -X POST \
   }' \
   http://localhost:8000/predict
 ```
-  - Example via Nginx proxy:
+  - Example via Nginx proxy (port 3000):
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
@@ -316,8 +317,18 @@ curl -X POST \
 ]
 ```
 
+To test all endpoints:
+```bash
+cd server
+make curl_tests # unstructures output
+# or
+make curl_tests_jq # structured output with jq
+# or directly
+JQ=0 sh ./test/curl_tests.sh
+```
+
 Notes:
-- The server concatenates `title + " " + abstract` and runs a Transformers `pipeline("text-classification", return_all_scores=true)` using the model under `saved_models/biobert-lora/`.
+- The server concatenates `title + " " + abstract` and runs a Transformers `AutoModelForSequenceClassification.from_pretrained` using the model on [Hugging Face](https://huggingface.co/Hiver77/MDT). It can also use a local model placed under [./saved_models](./saved_models).
 - If the model is missing or fails to load, the API returns `500 Model not loaded`.
 
 
@@ -358,6 +369,123 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
 - [Model Training Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
 - [Model in Hugging Face](https://huggingface.co/Hiver77/MDT)
+- [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test PDF upload](./server/test/curl_tests.sh)
+
+## Project Diagram
+
+### Solution Design Process
+
+This diagram shows how we approached the biomedical article classification challenge, from initial research to final deployment:
+
+```mermaid
+flowchart TD
+    A[Challenge: Biomedical Article Classification] --> B[Research Phase]
+    B --> C[Data Analysis]
+    C --> D[Model Selection]
+    D --> E[Training & Validation]
+    E --> F[API Development]
+    F --> G[Client Interface Development with V0 Chat]
+    G --> H[Visual Design development]
+    H --> I[MCP Server Development]
+    I --> J[Integration & Testing]
+    J --> K[Final Report & Presentation development]
+    K --> L[Deployment]
+    
+    B --> B1[Literature Review]
+    B --> B2[Existing Solutions Analysis]
+    C --> C1[Data Preprocessing]
+    C --> C2[Feature Engineering]
+    D --> D1[Hugging Face Models]
+    D --> D2[Custom Fine-tuning]
+
+    G --> G1[Logo design with AI]
+    G --> G2[Banners design with AI]
+```
+
+### Enhanced System Flow
+
+This diagram illustrates the complete data flow through our system, from user input to results display:
+
+```mermaid
+flowchart LR
+    A[Client Input] --> B[Text Preprocessing]
+    B --> C[Feature Extraction]
+    C --> D[Model Prediction]
+    D --> E[Category Classification]
+    E --> F[Results Display]
+    F --> G[Dashboard Analytics]
+    
+    H[Training Data] --> I[Model Training]
+    I --> J[Model Validation]
+    J --> K[Model Deployment]
+    K --> D
+```
+
+### Complete System Architecture
+
+This diagram shows the full technical architecture with all layers and components:
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        A[Next.js Client]
+        B[React Components]
+        C[UI Components]
+    end
+    
+    subgraph "API Layer"
+        D[FastAPI Server]
+        E[MCP Server]
+        F[Authentication]
+    end
+    
+    subgraph "ML Layer"
+        G[Hugging Face Model]
+        H[Custom Training Pipeline]
+        I[Model Registry]
+    end
+    
+    subgraph "Data Layer"
+        J[Training Data]
+        K[Processed Features]
+        L[Model Artifacts]
+    end
+    
+    A --> D
+    A --> E
+    D --> G
+    E --> G
+    G --> H
+    H --> I
+    I --> L
+```
+
+### Technology Stack Flow Diagram
+
+The basic interaction flow between components:
+
+```mermaid
+flowchart
+    A[Client] --> B[Server]
+    A[Client] --> C[MCP Server]
+    B --> D[Hugging Face Model]
+    C --> D[Hugging Face Model]
+    D --> E[Model]
+    E --> F[API]
+    F --> G[Client]
+    G --> H[Dashboard]
+```
+
+### Docker Deployment Architecture
+
+Containerized deployment structure:
+
+```mermaid
+flowchart
+    A[Client + API -> Port 3000]  --> Nginx
+    B[Server -> Port 8000] --> Uvicorn
+    C[MCP Server -> Port 8000] --> FastMCP
+```
 
 ## Project Structure
 
@@ -367,15 +495,6 @@ abstractgo/
 ├── LICENSE
 ├── package.json              # Workspace manager (npm workspaces)
 ├── .env.example
-├── server/                   # Backend (Python + FastAPI)
-│   ├── .env.example
-│   ├── Makefile
-│   ├── package.json
-│   ├── pyproject.toml
-│   ├── requirements.txt
-│   └── api/
-│       ├── __init__.py
-│       └── main.py
 ├── client/                   # Frontend (React + Next.js)
 │   ├── .env.example
 │   ├── .gitignore
@@ -392,9 +511,26 @@ abstractgo/
 │   ├── pages/
 │   ├── public/
 │   └── styles/
-└── deploy/                   # Deployment configuration
-    ├── docker-compose.yml
-    └── nginx.conf
+├── deploy/                   # Deployment configuration
+│   ├── docker-compose.yml
+│   └── nginx.conf
+├── mcp-server/               # MCP Server (Python + FastMCP)
+│   ├── .env.example
+│   ├── Makefile
+│   ├── package.json
+│   ├── pyproject.toml
+│   ├── requirements.txt
+│   ├── mcp_server.py
+│   └── run_mcp_server.sh
+└── server/                   # Backend (Python + FastAPI)
+   ├── .env.example
+   ├── Makefile
+   ├── package.json
+   ├── pyproject.toml
+   ├── requirements.txt
+   └── api/
+       ├── __init__.py
+       └── main.py
 ```
 
 ## The Challenge
