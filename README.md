@@ -21,6 +21,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
   - [Installation](#installation)
 - [Usage](#usage)
   - [Development Mode](#development-mode)
+  - [MCP Server](#mcp-server-usage)
   - [Production Mode](#production-mode)
   - [Available Make Commands](#available-make-commands)
 - [API Endpoints](#api-endpoints)
@@ -162,9 +163,18 @@ make run
 
 ![AbstractGo MCP Server Banner](./mcp-server/assets/abstractgo.mcp.server.banner.010.jpeg)
 
-**Use the MCP server**
+### MCP Server Usage
 
-For more information about the MCP server and how to use it, see the [MCP Server README](./mcp-server/README.md).
+The **MCP server** serves the ML model and the dashboard with the same resources and tools as the API.
+
+For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
+
+You can use the MCP Inspector to test the server.
+
+```bash
+cd mcp-server
+make run_mcp_inspector
+```
 
 ### Other Development Mode commands
 
