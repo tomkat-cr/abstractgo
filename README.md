@@ -40,13 +40,13 @@ AbstractGo is an AI/ML system that classifies biomedical literature using only t
 - **Model-powered classification**: API and MCP server that scores input title+abstract with a [Transformers Hugging Face model](https://huggingface.co/Hiver77/MDT) (`text-classification`) based on [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1).
 - **Interactive dashboard**: UI with metrics, confusion matrix, category distributions, performance trends, and a demo component to interact with the model and API.
 - **MCP server**: MCP-compliant server based on FastAPI that serves the model and the dashboard with the same resources and tools as the API. For instructions to use it, see the [MCP Server README](./mcp-server/README.md).
+- **PDF upload**: API and MCP server has the ability to score input PDF with a [OpenAI API](https://platform.openai.com/docs/api-reference/files) to extract the title and abstract.
 - **Vercel V0 Chat**: [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) with the UI vibe coding development. Visit this [url](https://v0.app/chat/abstract-go-rrzvfQyOCKc) to try it out.
 - **Model Training Analysis**: in this [README](./notebooks/README.md) file there's the complete model training analysis and the [notebook](./notebooks/AbstractGo_Final_Training_Model.ipynb) has the off-line training steps. The model training datasets are in the [/data/raw](./data/raw) directory.
 - **Jupiter and Google Colab Notebooks**: [notebooks](./notebooks) directory with the model training Jupiter notebook. Visit this [Google Colab notebook url](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) to check the live step-by-step instructions we run to train the model.
-- **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API.
-
+- **Batch Classification**: [data-scripts/Test_model.py](./data-scripts/Test_model.py) script to batch-classify medical articles from a [CSV file](./data/raw/test.csv).
+- **Containerized deployment**: `deploy/docker-compose.yml` with Nginx serving the client and reverse-proxying to the API, and production-ready for servers with containerized deployment.
 - **Monorepo workflow**: Root `Makefile` orchestrates client and server tasks; npm workspaces for script aggregation.
-
 
 ## Technologies
 
@@ -56,12 +56,14 @@ AbstractGo is an AI/ML system that classifies biomedical literature using only t
 - **Transformers** (4.55.x) with a BioBERT tokenizer
 - **Uvicorn** (ASGI server)
 - **Poetry** (dependency and environment management)
+- **OpenAI API or AI/ML API** (to use the the PDF upload feature)
 
 ### MCP Server
 - **MCP** (1.13.x)
 - **FastAPI** (0.116.x)
 - **Transformers** (4.55.x) with a BioBERT tokenizer
 - **Poetry** (dependency and environment management)
+- **OpenAI API or AI/ML API** (to use the the PDF upload feature)
 
 ### Frontend
 - **React** (18)
@@ -86,6 +88,7 @@ Before running this project, make sure you have the following installed:
 - [Python](https://www.python.org/downloads/) (version > 3.11.0, < 3.14)
 - [Git](https://git-scm.com/downloads) (to clone the repository)
 - Make: [Mac](https://formulae.brew.sh/formula/make) | [Windows](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows) | [Linux](https://askubuntu.com/questions/161104/how-do-i-install-make) (to run the Makefile)
+- [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) (to use the the PDF upload feature)
 
 ### Installation
 
@@ -151,16 +154,12 @@ make ssl-certs-creation
 make run
 ```
 
-<br>
-
 ## Web UI / Dashboard
 
 ![AbstractGo Banner](./assets//abstractgo.banner.010.jpeg)
 
 - Load your preferred web browser
 - Go to [http://localhost:3000](http://localhost:3000)
-
-<br>
 
 ## MCP Server Usage
 
@@ -317,7 +316,7 @@ curl -X POST \
 ]
 ```
 
-To test all endpoints:
+  - To test all endpoints (curl tests):
 ```bash
 cd server
 make curl_tests # unstructures output
@@ -371,7 +370,7 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 - [Model in Hugging Face](https://huggingface.co/Hiver77/MDT)
 - [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test PDF upload](./server/test/curl_tests.sh)
 
-## Project Diagram
+## Project Diagrams
 
 ### Solution Design Process
 
@@ -398,8 +397,8 @@ flowchart TD
     D --> D1[Hugging Face Models]
     D --> D2[Custom Fine-tuning]
 
-    G --> G1[Logo design with AI]
-    G --> G2[Banners design with AI]
+    H --> H1[Logo design with AI]
+    H --> H2[Banners design with AI]
 ```
 
 ### Enhanced System Flow
@@ -533,13 +532,13 @@ abstractgo/
        └── main.py
 ```
 
-## The Challenge
+## The Origin of AbstractGo
 
 ![Challenge Banner](./assets/techsphere.colombia.challenge.banner.png)
 
 This project is a solution to the [AI Biomedical Classification Challenge](https://techspherecolombia.com/ai-data-challenge/) hackathon organized by [TechSphere Colombia](https://techspherecolombia.com/) in Aug 2025.
 
-### Challenge Goal
+### The Challenge Goal
 
 Build an Artificial Intelligence solution to support the classification of medical literature.
 
@@ -551,7 +550,7 @@ There's a dataset available for training and testing your model. It contains 3,5
 
 File: [challenge_data-18-ago.csv](https://techspherecolombia.com/wp-content/uploads/2025/08/challenge_data-18-ago.csv)<br>
 
-## Dataset Structure
+### Dataset Structure
 
 * `title`
 Title of the medical article
@@ -573,9 +572,34 @@ Given a medical article, your system must correctly classify whether it belongs 
 - Hepatorenal
 - Oncological
 
+## Tools and Services
+
+- [Vercel V0](https://v0.app)
+- [Hugging Face](https://huggingface.co/)
+- [OpenAI ChatGPT](https://chatgpt.com/)
+- [Google Gemini](https://gemini.google.com/)
+- [Anthropic Claude](https://www.anthropic.com/)
+- [Google Colab](https://colab.research.google.com/)
+- [OpenAI API](https://platform.openai.com/docs/api-reference) with [GPT-5](https://openai.com/gpt-5/)
+- [AI/ML API](https://aimlapi.com/) with [GPT-4o](https://aimlapi.com/models)
+- [LiteLLM](https://github.com/BerriAI/litellm)
+- [Cursor](https://www.cursor.com/)
+- [Windsurf](https://windsurf.ai/)
+
+## Future Features
+
+- Fix the README of the model [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
+- Verify why the model returns weights for non-sensical data, like title="test" and abstract="test"
+- Let a AI model evaluate the model performance and accuracy during the classification queries and.
+- Add a Database (e.g. Mongodb) in deploy docker composer or use a cloud database
+- Add the database to the API and MCP server
+- Make the API / MCP server endpoints for the historical data maintenance and consumption. The historical data will be populated with the data from the clasification queries.
+- Re-enable the historical data in the dashboard
+- Automate the model training and fine-tuning with a CI/CD pipeline and the automatic generation of the [model_training_data.json](./server/data/model_training_data.json) file used in the dashboard.
+
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 
