@@ -35,7 +35,7 @@ perform_curl http://localhost:8000/training_metrics
 
 echo ""
 echo ""
-echo "Predict (directly to API 8000):"
+echo "Now testing the Predict (directly to API 8000):"
 echo "Title: ${TITLE}"
 echo "Abstract: ${ABSTRACT}"
 echo ""
@@ -50,7 +50,7 @@ perform_curl -X POST \
 
 echo ""
 echo ""
-echo "Predict (via Nginx proxy 3000):"
+echo "Now testing the Predict (via Nginx proxy 3000):"
 echo "Title: ${TITLE}"
 echo "Abstract: ${ABSTRACT}"
 echo ""
@@ -65,7 +65,7 @@ perform_curl -X POST \
 
 echo ""
 echo ""
-echo "PDF Read:"
+echo "Now testing the PDF Read:"
 echo "File: ${PDF_FILE}"
 echo ""
 
@@ -76,42 +76,47 @@ perform_curl -X POST \
 
 echo ""
 echo ""
-echo "Dashboard Metrics:"
+echo "The expected result should be:"
+echo "Title: 'Reflection paper on regulatory requirements for the development of medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC)'"
+echo "Abstract: 'This reflection paper outlines the European regulatory position on the clinical development of medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC), covering scope, legal basis, study design, endpoints, intercurrent events, real-world evidence, pediatric considerations, and safety, with emphasis on disease-modifying approaches and symptomatic treatment of cholestatic pruritus.'"
+
+echo ""
+echo "Now testing the Dashboard Metrics:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/metrics
 
 echo ""
 echo ""
-echo "Dashboard Confusion Matrix:"
+echo "Now testing the Dashboard Confusion Matrix:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/confusion-matrix
 
 echo ""
 echo ""
-echo "Dashboard Performance:"
+echo "Now testing the Dashboard Performance:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/performance
 
 echo ""
 echo ""
-echo "Dashboard Distribution:"
+echo "Now testing the Dashboard Distribution:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/distribution
 
 echo ""
 echo ""
-echo "Dashboard Analytics:"
+echo "Now testing the Dashboard Analytics:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/analytics
 
 echo ""
 echo ""
-echo "Dashboard Classification History:"
+echo "Now testing the Dashboard Classification History:"
 echo ""
 
 perform_curl http://localhost:8000/dashboard/classification-history

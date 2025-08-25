@@ -35,7 +35,7 @@ export default function MedicalDashboard() {
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               {/* <Stethoscope className="h-6 w-6 text-primary-foreground" /> */}
-              <img src="/abstractgo.logo.010.100px.png" alt="AbstractGo Logo" width={40} height={40} />
+              <img src="/abstractgo.logo.020.png" alt="AbstractGo Logo" width={40} height={40} />
             </div>
             <div>
               <h1 className="text-xl font-semibold text-card-foreground"><a href="https://github.com/tomkat-cr/abstractgo" target="_blank" rel="noopener noreferrer">AbstractGo</a></h1>
