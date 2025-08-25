@@ -1,4 +1,4 @@
-# AbstractGo MCP Server
+# AbstractGo MCP Server and Client Configuration
 
 ![AbstractGo MCP Server banner](./assets/abstractgo.mcp.server.banner.010.jpeg)
 

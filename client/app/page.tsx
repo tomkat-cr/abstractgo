@@ -34,11 +34,12 @@ export default function MedicalDashboard() {
         <div className="flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <Stethoscope className="h-6 w-6 text-primary-foreground" />
+              {/* <Stethoscope className="h-6 w-6 text-primary-foreground" /> */}
+              <img src="/abstractgo.logo.020.png" alt="AbstractGo Logo" width={40} height={40} />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-card-foreground">AbstractGo</h1>
-              <p className="text-sm text-muted-foreground">AI-Powered Classification System</p>
+              <h1 className="text-xl font-semibold text-card-foreground"><a href="https://github.com/tomkat-cr/abstractgo" target="_blank" rel="noopener noreferrer">AbstractGo</a></h1>
+              <p className="text-sm text-muted-foreground"><a href="https://github.com/tomkat-cr/abstractgo" target="_blank" rel="noopener noreferrer">AI-Powered Classification System</a></p>
             </div>
           </div>
           <div className="flex items-center gap-4">

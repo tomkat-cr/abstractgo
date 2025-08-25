@@ -32,7 +32,7 @@ start_up:
 shut_down:
 	bash ./link_common_assets.sh unlink
 
-run_mcp_inspector: start_up
+run-mcp-inspector: start_up
 	MCP_INSPECTOR=1 bash ./run_mcp_server.sh
 
 # Run in production mode

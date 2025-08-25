@@ -242,6 +242,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
                         onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                         maxLength={500}
                         disabled={classificationLoading}
+                        className="border-black"
                       />
                       <p className="text-xs text-muted-foreground">
                         {formData.title.length}/500 characters
@@ -258,6 +259,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
                         rows={6}
                         maxLength={5000}
                         disabled={classificationLoading}
+                        className="border-black"
                       />
                       <p className="text-xs text-muted-foreground">
                         {formData.abstract.length}/5000 characters
@@ -329,7 +331,7 @@ export function ClassificationDemo({ className = "" }: ClassificationDemoProps) 
                         accept=".pdf"
                         onChange={handleFileSelect}
                         disabled={pdfLoading}
-                        className="flex-1"
+                        className="flex-1 border-black"
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">

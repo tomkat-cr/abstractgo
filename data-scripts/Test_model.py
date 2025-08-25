@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-This script provides functionality to classify medical articles using a pre-trained model.
+This script provides functionality to batch-classify medical articles using a
+pre-trained model.
 """
 
 import pandas as pd
@@ -11,6 +12,7 @@ from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 labels = ["neurological", "hepatorenal", "cardiovascular", "oncological"]
+
 
 def combine_title_abstract(row):
     """
@@ -34,6 +36,7 @@ def combine_title_abstract(row):
         return abstract
     else:
         return "No content available"
+
 
 def classify_medical_article_batch(texts: List[str], tokenizer, model, top_k=3, batch_size=32):
     """
@@ -77,6 +80,7 @@ def classify_medical_article_batch(texts: List[str], tokenizer, model, top_k=3, 
             all_results.append(results[:top_k])
 
     return all_results
+
 
 def classify_csv(csv_file: str, tokenizer, model, top_k=3, batch_size=32, output_file=None):
     """
@@ -139,13 +143,14 @@ def classify_csv(csv_file: str, tokenizer, model, top_k=3, batch_size=32, output
 
     return df_results
 
+
 def show_results(df_results):
     """
     Shows classification results in a readable format
     """
     print("\n=== CLASSIFICATION RESULTS ===")
     print(f"Total articles processed: {len(df_results)}")
-    
+
     # Show first rows
     print("\nFirst 5 classifications:")
     for idx, row in df_results.head().iterrows():
@@ -156,6 +161,7 @@ def show_results(df_results):
             category = row.get(f'top_{i}_category', 'N/A')
             probability = row.get(f'top_{i}_probability', 0)
             print(f"  {i}. {category}: {probability:.4f}")
+
 
 def main():
     """
@@ -171,16 +177,16 @@ def main():
         # Initialize model (make sure labels is defined)
         print("Initializing model...")
         # Initialize model
-        model = AutoModelForSequenceClassification.from_pretrained("Hiver77/MDT", 
-                                                                    trust_remote_code=True,
-                                                                    num_labels=len(labels)
-                                                                )
+        model = AutoModelForSequenceClassification.from_pretrained(
+            "Hiver77/MDT",
+            trust_remote_code=True,
+            num_labels=len(labels)
+        )
         # Initialize tokenizer (you may need to adjust the model name)
         tokenizer = AutoTokenizer.from_pretrained("Hiver77/MDT")
-        
+
         print("Model and tokenizer initialized successfully!")
-        
-        
+
         # Execute classification
         print("Starting classification process...")
         df_results = classify_csv(
@@ -191,16 +197,17 @@ def main():
             batch_size=batch_size,
             output_file=output_file
         )
-        
+
         # Show results
         show_results(df_results)
-        
-        print(f"\nProcess completed successfully!")
+
+        print("\nProcess completed successfully!")
         print(f"Results saved in: {output_file}")
-        
+
     except Exception as e:
         print(f"Error during execution: {str(e)}")
         raise
+
 
 if __name__ == "__main__":
     main()
