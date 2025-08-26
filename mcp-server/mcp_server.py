@@ -56,7 +56,10 @@ DEBUG = os.environ.get("SERVER_DEBUG", "0") == "1"
 
 MCP_HTTP_TRANSPORT = get_non_empty_value("MCP_HTTP_TRANSPORT", "1") == "1"
 MCP_SERVER_HOST = get_non_empty_value("MCP_SERVER_HOST", "0.0.0.0")
-MCP_SERVER_PORT = int(get_non_empty_value("MCP_SERVER_PORT", "8070"))
+try:
+    MCP_SERVER_PORT = int(get_non_empty_value("MCP_SERVER_PORT", "8070"))
+except ValueError:
+    raise ValueError("MCP_SERVER_PORT must be an integer.")
 
 DEFAULT_JSON_INDENT = 2
 

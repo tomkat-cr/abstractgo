@@ -3,6 +3,7 @@
 # 2025-08-22 | CR
 
 install_all_dependencies() {
+    set -e
     echo "Installing all dependencies (not from individual requirements files)"
     echo ""
 
@@ -42,6 +43,7 @@ run_mcp_server() {
 }
 
 load_envs() {
+    set -e
     echo ""
     echo "Loading environment variables from /code/.env"
     sh /code/load_envs.sh /code/.env
