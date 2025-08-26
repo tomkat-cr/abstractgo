@@ -73,9 +73,15 @@ make run-mcp-inspector
 
 ## MCP Client Configuration
 
-### Claude Desktop
+You can use the MCP server in clients like VS Code, Cursor or Claude Desktop.
 
-Add this configuration to your `claude_desktop_config.json` to run it locally:
+### With Standard Input/Output (stdio) Transport
+
+The `Stdio Transport` connection method allows MCP clients to be connected to the MCP server locally. You must do the [installation](#installation) step but the server doesn't need to be running.
+
+#### Claude Desktop
+
+Add this configuration to your `claude_desktop_config.json`:
 
 ```json
 {
@@ -93,21 +99,7 @@ Add this configuration to your `claude_desktop_config.json` to run it locally:
 }
 ```
 
-To run the local live version (HTTP transport), use the following configuration:
-```json
-{
-  "mcpServers": {
-    "abstractgo": {
-      "url": "http://localhost:8070/mcp",
-      "headers": {
-        "AG_API_KEY": "ag-api-key-123"
-      }
-    }
-  }
-}
-```
-
-### VS Code MCP Extension
+#### VS Code MCP Extension
 
 Add to your VS Code settings or `.vscode/mcp.json`:
 
@@ -129,9 +121,48 @@ Add to your VS Code settings or `.vscode/mcp.json`:
 }
 ```
 
+### Streamable HTTP Transport
+
+The `HTTP Transport` connection method allows MCP clients to be connected to live MCP servers. You must do the [installation](#installation) step and the server needs to be started and running.
+
+#### Claude Desktop
+
+Add this configuration to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "abstractgo": {
+      "url": "http://localhost:8070/mcp",
+      "headers": {
+        "AG_API_KEY": "ag-api-key-123"
+      }
+    }
+  }
+}
+```
+
+#### VS Code MCP Extension
+
+Add to your VS Code settings or `.vscode/mcp.json`:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "abstractgo": {
+        "url": "http://localhost:8070/mcp",
+        "headers": {
+          "AG_API_KEY": "ag-api-key-123"
+        }
+      }
+    }
+  }
+}
+```
+
 NOTES:
 - Set the `AG_API_KEY` environment variable to your AbstractGo API key in the server's `env` section.
-- When you configure the MCP server in clientes like VS Code, Cursor or Claude Desktop, you must do the [installation](#installation) step but the server doesn't need to be started.
 
 ## Usage Examples
 
@@ -158,7 +189,9 @@ Once connected to an MCP client, you can interact with the server using natural 
 You can use the AbstractGo MCP server to classify articles and get the results in a natural language format.
 
 ```
-Using the abstractgo mcp, give me the result for the title "Reflection paper on regulatory requirements for the development of medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC)" and abstract "This reflection paper outlines the European regulatory perspective on the clinical development of new medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC). It covers scope, legal basis, and relevant guidelines, and provides recommendations on study design, endpoints, estimands, patient population, and safety considerations for both first-line and second-line therapies, as well as symptomatic treatment of cholestatic pruritus. The document also discusses real-world evidence, paediatric considerations, and the use of histology and non-invasive methods to support assessment, aiming to define development strategies for these rare, slowly progressive cholestatic liver diseases and to inform future guidance."
+Using the abstractgo mcp, give me the result for the
+title "Reflection paper on regulatory requirements for the development of medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC)"
+and abstract "This reflection paper outlines the European regulatory perspective on the clinical development of new medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC). It covers scope, legal basis, and relevant guidelines, and provides recommendations on study design, endpoints, estimands, patient population, and safety considerations for both first-line and second-line therapies, as well as symptomatic treatment of cholestatic pruritus. The document also discusses real-world evidence, paediatric considerations, and the use of histology and non-invasive methods to support assessment, aiming to define development strategies for these rare, slowly progressive cholestatic liver diseases and to inform future guidance."
 ```
 
 The result will be:
