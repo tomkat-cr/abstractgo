@@ -50,7 +50,7 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
 
 AbstractGo is an intelligent AI/ML system designed to classify biomedical literature using only article titles and abstracts as input.
 
-The system features streamlined API and MCP backends that serves a sophisticated **text-classification** [ML model]([Hiver77/MDT](https://huggingface.co/Hiver77/MDT)), built on [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1) with LoRA fine-tuning. We called it [MDT](https://huggingface.co/Hiver77/MDT) (our name [Melo-Dramatics Team](#credits) shortcode) and it's available on [Hugging Face](https://huggingface.co).
+The system features streamlined API and MCP backends that serves a sophisticated **text-classification** [ML model](https://huggingface.co/Hiver77/MDT), built on [BioBERT](https://huggingface.co/dmis-lab/biobert-v1.1) with LoRA fine-tuning. We called it [MDT](https://huggingface.co/Hiver77/MDT) (our name [Melo-Dramatics Team](#credits) shortcode) and it's available on [Hugging Face](https://huggingface.co).
 
 Complementing the backend is a modern [Dashboard](#dashboard-screenshots) that provides comprehensive insights through model performance metrics, confusion matrices, category distributions, and an interactive demo playground.
 
