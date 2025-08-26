@@ -176,6 +176,7 @@ OPENAI_API_KEY=sk-proj-1234567890
 
 **MCPServer `.env`:**
 ```bash
+nano mcp-server/.env
 ```
 
 ```env
@@ -419,6 +420,7 @@ curl -X POST \
   { "label": "Oncological", "score": 0.02 }
 ]
 ```
+  - You can have the complete endpoint documentation with the Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs).
 
   - To test all endpoints (curl tests):
 ```bash
