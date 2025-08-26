@@ -152,7 +152,7 @@ The analysis of these results is clear. The advanced BioBERT model substantially
 
 ## 7. Interactive Dashboard and Live Demonstration (V0)
 
-To fulfill the challenge's bonus requirement and to create a professional, intuitive interface for our results, we utilized V0 to generate a web-based dashboard. Based on a detailed and structured prompt, V0 produced a modern, responsive interface that serves as both a performance report and a live demonstration tool. The dashboard is organized into three main sections: 
+To fulfill the challenge's bonus requirement and to create a professional, intuitive interface for our results, we utilized V0 to generate a web-based dashboard. Based on a detailed and structured prompt, V0 produced a modern, responsive interface that serves as both a performance report and a live demonstration tool. The dashboard is organized into four main sections: 
 
 ### 7.1 Section 1: Real-Time Classification Demo
 
@@ -208,12 +208,12 @@ To serve our model as a real-time service, we developed a RESTful API using Fast
 
 ### 8.2 MCP server
 
-Our MCP-compliant server based on FastAPI serves the ML model and the dashboard with the same resources and tools as the FastAPI API. For instructions to use it, see the [MCP Server README](../mcp-server/README.md).
+Our MCP-compliant server based on FastMCP serves the ML model and the dashboard with the same resources and tools as the FastAPI API. For more information and instructions to use it, see the [MCP Server README](../mcp-server/README.md).
 
 
 ### 8.3 PDF upload
 
-Both the API and MCP server has the ability to score input from PDF files with [OpenAI API](https://platform.openai.com/docs/api-reference/files) to extract the title and abstract.
+Both the API and MCP server has the ability to score input from PDF files with [OpenAI API](https://platform.openai.com/docs/api-reference/files). The ​​LLM reads the PDF file, analyzes it and deduces the title and abstract.
 
 ### 8.4 Reproducibility with Docker
 
