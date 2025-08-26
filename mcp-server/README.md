@@ -93,8 +93,7 @@ Add this configuration to your `claude_desktop_config.json` to run it locally:
 }
 ```
 
-<!--
-To run the local live version, use the following configuration:
+To run the local live version (HTTP transport), use the following configuration:
 ```json
 {
   "mcpServers": {
@@ -107,7 +106,7 @@ To run the local live version, use the following configuration:
   }
 }
 ```
--->
+
 ### VS Code MCP Extension
 
 Add to your VS Code settings or `.vscode/mcp.json`:
@@ -153,6 +152,35 @@ Once connected to an MCP client, you can interact with the server using natural 
 - "Show me the distribution analysis"
 - "Get the classification history"
 - "Display the current dashboard metrics"
+
+### Prompt with real life data
+
+You can use the AbstractGo MCP server to classify articles and get the results in a natural language format.
+
+```
+Using the abstractgo mcp, give me the result for the title "Reflection paper on regulatory requirements for the development of medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC)" and abstract "This reflection paper outlines the European regulatory perspective on the clinical development of new medicinal products for primary biliary cholangitis (PBC) and primary sclerosing cholangitis (PSC). It covers scope, legal basis, and relevant guidelines, and provides recommendations on study design, endpoints, estimands, patient population, and safety considerations for both first-line and second-line therapies, as well as symptomatic treatment of cholestatic pruritus. The document also discusses real-world evidence, paediatric considerations, and the use of histology and non-invasive methods to support assessment, aiming to define development strategies for these rare, slowly progressive cholestatic liver diseases and to inform future guidance."
+```
+
+The result will be:
+
+```
+Based on the AbstractGo MCP prediction, here are the results for your article:
+Predicted Categories:
+1. Hepatorenal - 77.8% (highest confidence)
+2. Neurological - 11.5%
+3. Oncological - 7.5%
+4. Cardiovascular - 3.1%
+
+The model has classified your article with high confidence (77.8%) in the Hepatorenal category, which makes perfect sense given that the article discusses:
+1. Primary biliary cholangitis (PBC)
+2. Primary sclerosing cholangitis (PSC)
+3. Cholestatic liver diseases
+4. Liver-related regulatory requirements
+
+The hepatorenal category is the most appropriate since both PBC and PSC are autoimmune liver diseases that affect bile ducts and can lead to liver damage and potentially kidney complications. The other categories have much lower confidence scores, indicating they are not relevant to the main focus of your regulatory reflection paper.
+```
+
+![MCP Example in Cursor](../assets/screenshots/AbstracGo.Screenshot.MCP.Result.010.png)
 
 ## Architecture
 

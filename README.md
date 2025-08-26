@@ -274,6 +274,14 @@ make run-mcp-inspector
 
 ![AbstractGo Dashboard - Data Export](./assets/screenshots/AbstracGo.Screenshot.UI.Export.010.png)
 
+## MCP Server Screenshots
+
+### MCP Server Example
+
+![AbstractGo Dashboard - MCP Server Example](./assets/screenshots/AbstracGo.Screenshot.MCP.Result.010.png)
+
+Check the [Prompt with real life data](./mcp-server/README.md#prompt-with-real-life-data) section in the [MCP Server README](./mcp-server/README.md#prompt-with-real-life-data) for more details.
+
 ## Other Development Mode commands
 
 * With Docker

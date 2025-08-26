@@ -3,16 +3,36 @@
 # 2025-08-18 | CR
 #
 
-# This must be executed always at the script end to rename the saved_models_ directory to saved_models and remove the symlink to the external model path
-clean_up_function() {
+remove_server_mounts() {
+    if [ -d "../server/mcp-server" ]; then
+        echo "Removing mcp-server mount from ../server"
+        rm -rf ../server/mcp-server
+    else
+        echo "no mcp-server mount found in ../server"
+    fi
+    if [ -d "../server/saved_models" ]; then
+        echo "Removing server saved_models mount from ../server"
+        rm -rf ../server/saved_models
+    else
+        echo "no saved_models mount found in ../server"
+    fi
+    if [ -d "../mcp-server/lib" ]; then
+        echo "Removing lib mount from ../mcp-server"
+        rm -rf ../mcp-server/lib
+    else
+        echo "no lib mount found in ../mcp-server"
+    fi
+}
+
+remove_symlink_for_external_model() {
     if [ -d "../saved_models_" ]; then
         echo "Removing symlink for external model path: $EXTERNAL_MODEL_PATH"
         rm -f ../saved_models
         mv ../saved_models_ ../saved_models
+    else
+        echo "no symlink for external model path found in ../saved_models_"
     fi
 }
-
-trap clean_up_function EXIT
 
 create_symlink_for_external_model() {
     if [ ! -z "$EXTERNAL_MODEL_PATH" ]; then
@@ -40,6 +60,14 @@ load_envs() {
     echo "Loading environment variables from ../client/.env"
     set -o allexport; . ../client/.env; set +o allexport ;
 }
+
+# This must be executed always at the script end to rename the saved_models_ directory to saved_models and remove the symlink to the external model path
+clean_up_function() {
+    remove_symlink_for_external_model
+    remove_server_mounts
+}
+# We don't want to remove the mounts at the end of the script because we want to doit only for "down" action
+# trap clean_up_function EXIT
 
 load_envs
 
