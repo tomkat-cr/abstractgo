@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-- Check this special webpage we design to summarize the project: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
+- Project summary webpage: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 - Live website: [https://abstractgo.aclics.com](https://abstractgo.aclics.com)
 - Our ML model: [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)[]
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
