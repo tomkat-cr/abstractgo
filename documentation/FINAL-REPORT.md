@@ -46,7 +46,7 @@ flowchart TD
 
 ### Other diagrams
 
-Please check other the `diagrams` in the main [README.md](README.md#project-diagrams) file for more details.
+Please check the other `diagrams` in the main [README.md](../README.md#project-diagrams) file for more details.
 
 - [Enhanced System Flow](../README.md#enhanced-system-flow)
 - [Complete System Architecture](../README.md#complete-system-architecture)
