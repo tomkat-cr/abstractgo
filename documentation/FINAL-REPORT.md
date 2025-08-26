@@ -8,7 +8,9 @@ At the heart of our technical approach is a dual-model strategy, conceived to na
 
 This strategy proved highly effective. Our final advanced model, BioBERT with LoRA, achieved an outstanding F1-Score (Micro) of 0.92 on the held-out test set, significantly outperforming the baseline and demonstrating the power of domain-specific language models. The key deliverables for this project include the fully trained and validated classification model, a RESTful API service built with FastAPI, a Docker container for complete reproducibility, and a professional V0 dashboard for performance visualization and live demonstration. 
 
-Check this special webpage we design to summarize the project: [AbstractGo](./abstractgo.final.report.html)
+## TL;DR
+
+Check this special webpage we design to summarize the project: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 
 ## 2.- Solution Design Process
 

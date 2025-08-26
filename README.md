@@ -11,7 +11,12 @@
 
 AbstractGo is an AI/ML solution for medical investigation classification based on title and abstracts.
 
-Check the [Final Report](./documentation/FINAL-REPORT.md) for more details.
+## TL;DR
+
+- Check this special webpage we design to summarize the project: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
+- Check the [Executive Summary](./documentation/FINAL-REPORT.md#1--executive-summary) for more details.
+- Check the [Final Report](./documentation/FINAL-REPORT.md) for more details.
+
 
 ## Table of Contents
 
