@@ -31,6 +31,7 @@ from lib.api.endpoint_methods import (
 from lib.api.utilities import (
     get_standard_response,
     log_info,
+    get_non_empty_value,
 )
 from lib.api.types import Article
 
@@ -52,6 +53,11 @@ class MCPServerApp:
 
 
 DEBUG = os.environ.get("SERVER_DEBUG", "0") == "1"
+
+MCP_HTTP_TRANSPORT = get_non_empty_value("MCP_HTTP_TRANSPORT", "1") == "1"
+MCP_SERVER_HOST = get_non_empty_value("MCP_SERVER_HOST", "0.0.0.0")
+MCP_SERVER_PORT = int(get_non_empty_value("MCP_SERVER_PORT", "8070"))
+
 DEFAULT_JSON_INDENT = 2
 
 
@@ -430,7 +436,7 @@ def main():
     Main entry point for the AbstractGo MCP Server
     """
 
-    print("🥗 Starting AbstractGo Food & Nutrition MCP Server...")
+    print("🥗 Starting AbstractGo MCP Server...")
     print("\n📋 Available Tools:")
     print("      - mcp_authentication_tool: Authenticate user")
     print("      - get_api_keys: Get API keys")
@@ -468,7 +474,10 @@ def main():
     print("\n✅ Server ready for connections!")
 
     # Run the FastMCP server
-    mcp.run()
+    if MCP_HTTP_TRANSPORT:
+        mcp.run(transport="http", host=MCP_SERVER_HOST, port=MCP_SERVER_PORT)
+    else:
+        mcp.run()
 
 
 # if __name__ == "__main__":

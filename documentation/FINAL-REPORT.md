@@ -272,9 +272,16 @@ Ultimately, the success of AbstractGo lies not only in its final F1-score but in
 Thank you for your time and attention. We hope you enjoyed reading this report as much as we enjoyed building this project. We are looking forward to your feedback and suggestions.
 
 *This project is developed and maintained by*
-* [Iver Johan Incapie](https://github.com/Hiver77)
-* [Alejandro Arroyave Perez](https://github.com/Alejo5600)
-* [Carlos J. Ramirez](https://github.com/tomkat-cr).
+
+* Iver Johan Incapie:
+    - [LinkedIn](https://www.linkedin.com/in/iver-j-hincapie-7885a760/)
+    - [GitHub](https://github.com/Hiver77)
+* Alejandro Arroyave Perez:
+    - [LinkedIn](https://www.linkedin.com/in/alejandro-arroyave-p%C3%A9rez-6a3874205/)
+    - [GitHub](https://github.com/Alejo5600)
+* Carlos J. Ramirez:
+    - [LinkedIn](https://www.linkedin.com/in/carlosjramirez/)
+    - [GitHub](https://github.com/tomkat-cr)
 
 For more information or to contribute to the project, visit [AbstractGo](https://github.com/tomkat-cr/abstractgo).
 
