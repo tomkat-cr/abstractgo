@@ -192,7 +192,7 @@ This section offers a more granular view of the model's performance on a per-cla
 
 ### 7.4 Section 4: Data Export
 
-This section allows the user to export the data from the dashboard to a CSV file. The data is exported in different file formats (PDF, SCV, Excel, etc.) and with different options (all data, only the data for the selected categories, etc.).
+This section allows the user to export the data from the dashboard to a CSV file. The data is exported in different file formats (PDF, CSV, Excel, etc.) and with different options (all data, only the data for the selected categories, etc.).
 
 ![AbstractGo Dashboard - Data Export](../assets/screenshots/AbstracGo.Screenshot.UI.Export.010.png)
 
