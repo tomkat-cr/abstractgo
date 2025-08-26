@@ -263,8 +263,8 @@ async def my_resource() -> str:
 ## Transport Modes
 
 Currently supports:
-- **STDIO**: Standard input/output for local clients (default)
-- **Future**: HTTP/SSE transport for remote clients (planned)
+- **STDIO**: Standard input/output for local clients.
+- **HTTP**: HTTP transport for remote clients (default).
 
 ## Logging
 
