@@ -1,7 +1,7 @@
 services:
   abstractgo-server:
     container_name: abstractgo-server
-    image: python:3.12-slim
+    image: abstractgo_python_only
     command: sh -c "bash /code/all-in-one-server-entrypoint.sh"
     volumes:
       - ../server:/code
@@ -37,16 +37,30 @@ services:
       # MCP Server environment variables
       - AG_API_KEY=${AG_API_KEY}
       - MCP_INSPECTOR=${MCP_INSPECTOR}
-      - MCP_HTTP_TRANSPORT=${MCP_HTTP_TRANSPORT}
       - MCP_SERVER_PORT=${MCP_SERVER_PORT}
       - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
     ports: ["8000:8000", "8070:8070"]
     networks:
       - my_shared_network
 
+  abstractgo-client:
+    container_name: abstractgo-client
+    image: nginx:alpine
+    volumes:
+      - ../client/dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    environment:
+      - UI_PORT=${UI_PORT:-3000}
+      - UI_SECURE_PORT=${UI_SECURE_PORT:-3001}
+    ports: ["3000:80", "3001:443"]
+    depends_on: [abstractgo-server]
+    networks:
+      - my_shared_network
+    
   # abstractgo-mcp-server:
   #   container_name: abstractgo-mcp-server
-  #   image: python:3.12-slim
+  #   image: abstractgo_python_node
   #   command: sh -c "bash /code/mcp-server-entrypoint.sh"
   #   # Stay attached to the container (for MCP Inspector)
   #   stdin_open: true
@@ -58,6 +72,7 @@ services:
   #     - ../mcp-server:/code
   #     - ../mcp-server/requirements.txt:/code/requirements.txt
   #     - ./mcp-server-entrypoint.sh:/code/mcp-server-entrypoint.sh
+  #     - ../scripts/load_envs.sh:/code/load_envs.sh
   #   environment:
   #     # Server environment variables
   #     - PORT=${PORT}
@@ -80,29 +95,28 @@ services:
   #     - LLM_MAX_TOKENS=${LLM_MAX_TOKENS}
   #     - LLM_TOP_P=${LLM_TOP_P}
   #     - LLM_SEED=${LLM_SEED}
+  #     # MCP Inspector environment variables
+  #     - MCP_INSPECTOR=1
+  #     - MCP_INSPECTOR_PORT=8071
+  #     - MCP_PROXY_PORT=8072
   #     # MCP Server environment variables
   #     - AG_API_KEY=${AG_API_KEY}
-  #     - MCP_INSPECTOR=${MCP_INSPECTOR}
-  #     - MCP_SERVER_PORT=${MCP_SERVER_PORT}
-  #     - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
-  #   ports: ["8070:8070"]
+  #     - MCP_SERVER_PORT=8080
+  #     - MCP_SERVER_HOST=0.0.0.0
+  #     - MCP_HTTP_TRANSPORT=0
+  #   ports: ["8071:8071", "8072:8072"]
   #   networks:
   #     - my_shared_network
 
-  abstractgo-client:
-    container_name: abstractgo-client
-    image: nginx:alpine
-    volumes:
-      - ../client/dist:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    environment:
-      - UI_PORT=${UI_PORT:-3000}
-      - UI_SECURE_PORT=${UI_SECURE_PORT:-3001}
-    ports: ["3000:80", "3001:443"]
-    depends_on: [abstractgo-server]
-    networks:
-      - my_shared_network
+  # abstractgo-mcp-inspector:
+  #   container_name: abstractgo-mcp-inspector
+  #   image: ghcr.io/modelcontextprotocol/inspector:latest
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - CLIENT_PORT=8071
+  #     - SERVER_PORT=8072
+  #   ports: ["8071:8071", "8072:8072"]
+  #   depends_on: [abstractgo-server, abstractgo-client]
 
 networks:
   my_shared_network:

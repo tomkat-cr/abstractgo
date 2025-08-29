@@ -1,6 +1,6 @@
 {
   "name": "abstractgo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An AI/ML solution for medical investigation classification based on title and abstracts.",
   "private": true,
   "workspaces": [

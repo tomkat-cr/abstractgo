@@ -19,6 +19,8 @@ help:
 up:
 	bash run-deploy.sh run
 
+run: up
+
 # Stop all services
 down:
 	bash run-deploy.sh down

@@ -1,5 +1,7 @@
 {
   "name": "abstractgo-mcp-server",
+  "private": true,
+  "version": "1.1.0",
   "type": "module",
   "main": "mcp_server.py",
   "scripts": {

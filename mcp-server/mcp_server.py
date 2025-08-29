@@ -477,10 +477,14 @@ def main():
     print("\n✅ Server ready for connections!")
 
     # Run the FastMCP server
+    mcp_run_args = {
+        "host": MCP_SERVER_HOST,
+        "port": MCP_SERVER_PORT
+    }
     if MCP_HTTP_TRANSPORT:
-        mcp.run(transport="http", host=MCP_SERVER_HOST, port=MCP_SERVER_PORT)
-    else:
-        mcp.run()
+        mcp_run_args["transport"] = "http"
+    print(f"Running MCP Server on {mcp_run_args}")
+    mcp.run(**mcp_run_args)
 
 
 # if __name__ == "__main__":

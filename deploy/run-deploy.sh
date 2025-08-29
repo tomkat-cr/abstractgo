@@ -69,6 +69,15 @@ clean_up_function() {
 # We don't want to remove the mounts at the end of the script because we want to doit only for "down" action
 # trap clean_up_function EXIT
 
+create_docker_images() {
+    echo "Creating docker images..."
+    if ! sh ./docker_images/build_docker_images.sh
+    then
+        echo "Error creating docker images"
+        exit 1
+    fi
+}
+
 load_envs
 
 APP_NAME_LOWERCASE=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]')
@@ -85,6 +94,7 @@ if [ "$ACTION" = "restart" ]; then
     exit 0
 elif [ "$ACTION" = "run" ]; then
     create_symlink_for_external_model
+    create_docker_images
     echo "Starting services..."
     if ! docker network create my_shared_network
     then
