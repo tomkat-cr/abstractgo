@@ -6,10 +6,11 @@
 
 ## TL;DR
 
-- Project summary webpage: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 - Live website: [https://abstractgo.aclics.com](https://abstractgo.aclics.com)
+- Project summary webpage: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 - Our ML model: [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) vibe coding session
+- [Google Colab Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) for Model training, evaluation and confusion matrix generation.
 - GitHub repository: [https://github.com/tomkat-cr/abstractgo](https://github.com/tomkat-cr/abstractgo)
 
 ## 1. Executive Summary
@@ -153,6 +154,8 @@ The analysis of these results is clear. The advanced BioBERT model substantially
 ## 7. Interactive Dashboard and Live Demonstration (V0)
 
 To fulfill the challenge's bonus requirement and to create a professional, intuitive interface for our results, we utilized V0 to generate a web-based dashboard. Based on a detailed and structured prompt, V0 produced a modern, responsive interface that serves as both a performance report and a live demonstration tool. The dashboard is organized into four main sections: 
+
+Check the prompt used [here](PROMPTS.md#v0-prompt).
 
 ### 7.1 Section 1: Real-Time Classification Demo
 

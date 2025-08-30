@@ -11,12 +11,15 @@
 
 ## TL;DR
 
-AbstractGo is an intelligent AI/ML system designed to classify biomedical literature using only article titles and abstracts as input. The solution specializes in multi-label classification across four critical medical domains: `Cardiovascular`, `Neurological`, `Hepatorenal` and `Oncological`. The ML model gives a score for each of the four categories for a given input title+abstract. Also AI is used to read the PDF files and extract the title and abstract, and to evaluate the model performance.
+AbstractGo is an intelligent AI/ML system designed to classify [biomedical literature](./documentation/CONCEPTS.md#biomedical-literature) using only [article](./documentation/CONCEPTS.md#medical-articles) [titles](./documentation/CONCEPTS.md#article-title) and [abstracts](./documentation/CONCEPTS.md#article-abstract) as input. The solution specializes in multi-label classification across four critical medical domains: `Cardiovascular`, `Neurological`, `Hepatorenal` and `Oncological`. The ML model gives a score for each of the four categories for a given input [title+abstract](./documentation/CONCEPTS.md#article-title-and-abstract). Also AI is used to read the PDF files and extract the title and abstract, and to evaluate the model performance.
 
 - Live website: [https://abstractgo.aclics.com](https://abstractgo.aclics.com)
 - [Executive Summary](./documentation/FINAL-REPORT.md#1--executive-summary)
 - Investigation [Final Report](./documentation/FINAL-REPORT.md).
 - Project summary webpage: [AbstractGo Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html) (HTML)
+- Our ML model: [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
+- [Google Colab Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) for Model training, evaluation and confusion matrix generation.
+- GitHub repository: [https://github.com/tomkat-cr/abstractgo](https://github.com/tomkat-cr/abstractgo)
 
 ## Table of Contents
 
@@ -481,9 +484,11 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 ## Resources Links 
 
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
+- [V0 Prompt](./documentation/PROMPTS.md#v0-prompt)
 - [Google Colab Notebook for Model Training](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
 - [Our ML Model hosted in Hugging Face](https://huggingface.co/Hiver77/MDT)
 - [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test](./server/test/curl_tests.sh) the PDF upload and classification
+- [Prompts](./documentation/PROMPTS.md)
 
 ## Project Diagrams
 
