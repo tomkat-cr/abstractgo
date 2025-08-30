@@ -3,6 +3,15 @@
 # 2023-11-27 | CR
 
 install_mkcert_linux_common() {
+    if mkcert --version > /dev/null 2>&1
+    then
+        echo ""
+        echo "mkcert already installed"
+        return
+    fi
+    if [ -f mkcert-v*-linux-amd64 ]; then
+        rm mkcert-v*-linux-amd64
+    fi
     if ! curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
     then
         echo ""
@@ -19,6 +28,12 @@ install_mkcert_linux_common() {
     then
         echo ""
         echo "Error copying mkcert-v*-linux-amd64 to /usr/local/bin/mkcert"
+        exit 1
+    fi
+    if ! rm mkcert-v*-linux-amd64
+    then
+        echo ""
+        echo "Error removing mkcert-v*-linux-amd64"
         exit 1
     fi
 }
