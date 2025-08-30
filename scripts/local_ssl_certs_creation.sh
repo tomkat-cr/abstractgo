@@ -88,13 +88,15 @@ if [ "${SSL_CERT_GEN_METHOD}" = "" ]; then
 fi
 
 # Script directory
+BASE_DIR=$(pwd)
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
+
+# Load environment variables
+cd "$BASE_DIR"
+. "$SCRIPT_DIR/load_envs.sh"
 
 # Change to script directory
 cd "$SCRIPT_DIR"
-
-# Load environment variables
-. ./load_envs.sh
 
 if [ "${APP_NAME}" = "" ]; then
     echo "ERROR: APP_NAME environment variable not defined"
