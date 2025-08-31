@@ -42,6 +42,7 @@ services:
     ports: ["8000:8000", "8070:8070"]
     networks:
       - my_shared_network
+    restart: unless-stopped
 
   abstractgo-client:
     container_name: abstractgo-client
@@ -53,10 +54,15 @@ services:
     environment:
       - UI_PORT=${UI_PORT:-3000}
       - UI_SECURE_PORT=${UI_SECURE_PORT:-3001}
+      - NEXT_PUBLIC_APP_DOMAIN_NAME=${NEXT_PUBLIC_APP_DOMAIN_NAME}
+      - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+      - NEXT_PUBLIC_APP_SUBDIR=${NEXT_PUBLIC_APP_SUBDIR}
+      - NEXT_PUBLIC_DEBUG=${NEXT_PUBLIC_DEBUG}
     ports: ["3000:80", "3001:443"]
     depends_on: [abstractgo-server]
     networks:
       - my_shared_network
+    restart: unless-stopped
     
   # abstractgo-mcp-server:
   #   container_name: abstractgo-mcp-server
@@ -107,6 +113,7 @@ services:
   #   ports: ["8071:8071", "8072:8072"]
   #   networks:
   #     - my_shared_network
+  #   restart: unless-stopped
 
   # abstractgo-mcp-inspector:
   #   container_name: abstractgo-mcp-inspector
@@ -117,6 +124,7 @@ services:
   #     - SERVER_PORT=8072
   #   ports: ["8071:8071", "8072:8072"]
   #   depends_on: [abstractgo-server, abstractgo-client]
+  #   restart: unless-stopped
 
 networks:
   my_shared_network:

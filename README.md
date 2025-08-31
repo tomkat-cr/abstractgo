@@ -123,7 +123,16 @@ Before running this project, make sure you have the following installed:
 - [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) to use the the PDF upload feature and other LLM integrations
 
 NOTES:
-- After install poetry, run `poetry self add poetry-plugin-export` to install its dependencies.
+- After install poetry, run the following command to install its dependencies:<BR/>
+
+1. If poetry was installed with `pip` run the following command:
+```bash
+poetry self add poetry-plugin-export
+```
+2. Or if poetry was installed with `pipx` run the following command:
+```bash
+pipx inject poetry poetry-plugin-export
+```
 
 ### Installation
 
