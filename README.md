@@ -138,7 +138,7 @@ pipx inject poetry poetry-plugin-export
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/tomkat-cr//abstractgo.git
+git clone https://github.com/tomkat-cr/abstractgo.git
 cd abstractgo
 ```
 

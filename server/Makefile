@@ -33,6 +33,14 @@ start:
 # Clean node_modules and package-lock.json
 clean:
 	rm -rf .venv
+	rm -rf __pycache__
+	rm -rf .pytest_cache
+	rm -rf .mypy_cache
+	rm -rf .ruff_cache
+	rm -rf .coverage
+	rm -rf .coverage.*
+	rm -rf .pytest_cache
+	rm -rf .ruff_cache
 
 # Reinstall dependencies
 reinstall: clean install

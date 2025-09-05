@@ -5,7 +5,6 @@ services:
     command: sh -c "bash /code/all-in-one-server-entrypoint.sh"
     volumes:
       - ../server:/code
-      - ../server/requirements.txt:/code/requirements.txt
       - ../mcp-server:/code/mcp-server
       - ../server:/code/mcp-server/lib
       - ../mcp-server/requirements.txt:/code/mcp-server/requirements.txt
