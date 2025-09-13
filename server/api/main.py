@@ -52,6 +52,7 @@ app.add_middleware(
 
 log_info(f"API ready. CORS_ORIGIN: {CORS_ORIGIN}")
 
+
 @app.get("/")
 def read_root() -> dict[str, str]:
     return read_root_tool()
