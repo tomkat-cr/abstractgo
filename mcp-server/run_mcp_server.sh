@@ -111,7 +111,7 @@ fi
 copy_lib
 
 if [ "$MCP_INSPECTOR" = "1" ]; then
-    npx @modelcontextprotocol/inspector \
+    CLIENT_PORT=6274 SERVER_PORT=6277 npx @modelcontextprotocol/inspector \
         poetry \
         run \
         env $POETRY_ARGS $PYTHON_CMD mcp_server.py

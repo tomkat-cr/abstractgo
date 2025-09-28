@@ -1,6 +1,6 @@
 [project]
 name = "mcp-server"
-version = "1.0.0"
+version = "1.1.0"
 description = "MCP Server for the AbstractGo app"
 authors = [
     {name = "Carlos J. Ramirez", email = "tomkat_cr@yahoo.com"},

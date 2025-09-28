@@ -6,10 +6,11 @@
 
 ## TL;DR
 
-- Project summary webpage: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 - Live website: [https://abstractgo.aclics.com](https://abstractgo.aclics.com)
+- Project summary webpage: [AbstractGo Executive Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
 - Our ML model: [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc) vibe coding session
+- [Google Colab Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) for Model training, evaluation and confusion matrix generation.
 - GitHub repository: [https://github.com/tomkat-cr/abstractgo](https://github.com/tomkat-cr/abstractgo)
 
 ## 1. Executive Summary
@@ -154,6 +155,8 @@ The analysis of these results is clear. The advanced BioBERT model substantially
 
 To fulfill the challenge's bonus requirement and to create a professional, intuitive interface for our results, we utilized V0 to generate a web-based dashboard. Based on a detailed and structured prompt, V0 produced a modern, responsive interface that serves as both a performance report and a live demonstration tool. The dashboard is organized into four main sections: 
 
+Check the prompt used [here](PROMPTS.md#v0-prompt).
+
 ### 7.1 Section 1: Real-Time Classification Demo
 
 This section provides a tangible, interactive demonstration of the AbstractGo system in action. It features input fields for an article's title and abstract. A user can paste text into these fields and click the "Classify Article" button to receive a live prediction from the deployed model via the FastAPI backend. The results are displayed as a list of the four categories, each accompanied by a confidence score (e.g., "Cardiovascular: 95%"). A color-coded badge turns green for any category with a confidence score above 50%, providing clear and immediate feedback. This live demo powerfully showcases the practical applicability and real-world utility of our solution. 
@@ -217,7 +220,7 @@ Both the API and MCP server has the ability to score input from PDF files with [
 
 ### 8.4 Reproducibility with Docker
 
-To ensure complete reproducibility and ease of deployment, we containerized the entire application using Docker. We authored a [docker-compose.yml](../deploy/docker-compose.yml.example) file that specifies a Python 3.12 base image, copies over the application code and saved model artifacts, and installs all necessary dependencies from the `requirements.txt` files. This process creates a self-contained, portable deployment of our application. By running this Docker container, anyone can launch our FastAPI / FastMCPservice in any environment—be it a local machine or a cloud server—with a single command, guaranteeing that the system runs exactly as it did during development. This commitment to containerization is a cornerstone of modern MLOps and is essential for creating reliable, scalable, and maintainable machine learning systems. 
+To ensure complete reproducibility and ease of deployment, we containerized the entire application using Docker. We authored a [docker-compose.yml](../deploy/docker-compose.yml.example) file that specifies a Python 3.12 base image, copies over the application code and saved model artifacts, and installs all necessary dependencies from the `requirements.txt` files. This process creates a self-contained, portable deployment of our application. By running this Docker container, anyone can launch our FastAPI / FastMCP service in any environment —be it a local machine or a cloud server— with a single command, guaranteeing that the system runs exactly as it did during development. This commitment to containerization is a cornerstone of modern MLOps and is essential for creating reliable, scalable, and maintainable machine learning systems. 
 
 You can check the live demo at [https://abstractgo.aclics.com](https://abstractgo.aclics.com).
 

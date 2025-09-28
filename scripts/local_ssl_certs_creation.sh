@@ -3,6 +3,15 @@
 # 2023-11-27 | CR
 
 install_mkcert_linux_common() {
+    if mkcert --version > /dev/null 2>&1
+    then
+        echo ""
+        echo "mkcert already installed"
+        return
+    fi
+    if [ -f mkcert-v*-linux-amd64 ]; then
+        rm mkcert-v*-linux-amd64
+    fi
     if ! curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
     then
         echo ""
@@ -19,6 +28,12 @@ install_mkcert_linux_common() {
     then
         echo ""
         echo "Error copying mkcert-v*-linux-amd64 to /usr/local/bin/mkcert"
+        exit 1
+    fi
+    if ! rm mkcert-v*-linux-amd64
+    then
+        echo ""
+        echo "Error removing mkcert-v*-linux-amd64"
         exit 1
     fi
 }
@@ -88,13 +103,15 @@ if [ "${SSL_CERT_GEN_METHOD}" = "" ]; then
 fi
 
 # Script directory
+BASE_DIR=$(pwd)
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
+
+# Load environment variables
+cd "$BASE_DIR"
+. "$SCRIPT_DIR/load_envs.sh"
 
 # Change to script directory
 cd "$SCRIPT_DIR"
-
-# Load environment variables
-. ./load_envs.sh
 
 if [ "${APP_NAME}" = "" ]; then
     echo "ERROR: APP_NAME environment variable not defined"

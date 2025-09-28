@@ -2,21 +2,24 @@
 
 ![AbstractGo](./assets/abstractgo.logo.010.png)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)
 ![Python](https://img.shields.io/badge/python-%3E%3D3.11.0-green.svg)
 ![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
 ![Next.js](https://img.shields.io/badge/nextjs-14.2.14-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-AbstractGo is an AI/ML solution for medical investigation classification based on title and abstracts.
-
 ## TL;DR
 
-- Project summary webpage: [AbstractGo Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html)
-- Check the [Executive Summary](./documentation/FINAL-REPORT.md#1--executive-summary) for more details.
-- Check the [Final Report](./documentation/FINAL-REPORT.md) for more details.
+AbstractGo is an intelligent AI/ML system designed to classify [biomedical literature](./documentation/CONCEPTS.md#biomedical-literature) using only [article](./documentation/CONCEPTS.md#medical-articles) [titles](./documentation/CONCEPTS.md#article-title) and [abstracts](./documentation/CONCEPTS.md#article-abstract) as input. The solution specializes in multi-label classification across four critical medical domains: `Cardiovascular`, `Neurological`, `Hepatorenal` and `Oncological`. The ML model gives a score for each of the four categories for a given input [title+abstract](./documentation/CONCEPTS.md#article-title-and-abstract). Also AI is used to read the PDF files and extract the title and abstract, and to evaluate the model performance.
+
 - Live website: [https://abstractgo.aclics.com](https://abstractgo.aclics.com)
+- [Executive Summary](./documentation/FINAL-REPORT.md#1--executive-summary)
+- Investigation [Final Report](./documentation/FINAL-REPORT.md).
+- Project summary webpage: [AbstractGo Summary](https://raw.githack.com/tomkat-cr/abstractgo/main/documentation/abstractgo.final.report.html) (HTML)
+- Our ML model: [Hiver77/MDT](https://huggingface.co/Hiver77/MDT)
+- [Google Colab Notebook](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh) for Model training, evaluation and confusion matrix generation.
+- GitHub repository: [https://github.com/tomkat-cr/abstractgo](https://github.com/tomkat-cr/abstractgo)
 
 ## Table of Contents
 
@@ -30,7 +33,8 @@ AbstractGo is an AI/ML solution for medical investigation classification based o
   - [Development Mode](#development-mode)
   - [Web UI / Dashboard](#web-ui--dashboard)
   - [MCP Server Usage](#mcp-server-usage)
-  - [Dashboard Screenshots](#dashboard-screenshots)
+  - [Screenshots](#dashboard-screenshots)
+  - [MCP Server Screenshots](#mcp-server-screenshots)
   - [Other Development Mode Commands](#other-development-mode-commands)
   - [Production Mode](#production-mode)
   - [Available Make Commands](#available-make-commands)
@@ -119,13 +123,22 @@ Before running this project, make sure you have the following installed:
 - [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) to use the the PDF upload feature and other LLM integrations
 
 NOTES:
-- After install poetry, run `poetry self add poetry-plugin-export` to install its dependencies.
+- After install poetry, run the following command to install its dependencies:
+
+1. If poetry was installed with `pip` run the following command:
+```bash
+poetry self add poetry-plugin-export
+```
+2. Or if poetry was installed with `pipx` run the following command:
+```bash
+pipx inject poetry poetry-plugin-export
+```
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/tomkat-cr//abstractgo.git
+git clone https://github.com/tomkat-cr/abstractgo.git
 cd abstractgo
 ```
 
@@ -480,9 +493,11 @@ CORS_ORIGIN=https://${APP_DOMAIN_NAME}
 ## Resources Links 
 
 - [V0 Chat](https://v0.app/chat/abstract-go-rrzvfQyOCKc)
+- [V0 Prompt](./documentation/PROMPTS.md#v0-prompt)
 - [Google Colab Notebook for Model Training](https://colab.research.google.com/drive/1BU1rwp86fsX2hpAha2WIvcIZGoHq3EnU#scrollTo=6WaQOLd5Hswh)
 - [Our ML Model hosted in Hugging Face](https://huggingface.co/Hiver77/MDT)
 - [Example document](./server/test/assets/reflection-paper-regulatory-requirements-development-medicinal-products-primary-biliary-cholangitis-pbc-primary-sclerosing-cholangitis-psc_en.pdf) to [test](./server/test/curl_tests.sh) the PDF upload and classification
+- [Prompts](./documentation/PROMPTS.md)
 
 ## Project Diagrams
 
@@ -637,7 +652,7 @@ The goal will be to implement a system capable of assigning medical articles to 
 
 There's a dataset available for training and testing your model. It contains 3,565 records from NCBI, BC5CDR, and synthetic data.
 
-File: [challenge_data-18-ago.csv](https://techspherecolombia.com/wp-content/uploads/2025/08/challenge_data-18-ago.csv)<br>
+File: [challenge_data-18-ago.csv](https://techspherecolombia.com/wp-content/uploads/2025/08/challenge_data-18-ago.csv)
 
 ### Dataset Structure
 

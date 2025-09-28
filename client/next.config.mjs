@@ -9,6 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  basePath: (process.env.NEXT_PUBLIC_APP_SUBDIR ? '/' + process.env.NEXT_PUBLIC_APP_SUBDIR : ''),
   distDir: 'dist',
   output: 'export',
   env: {

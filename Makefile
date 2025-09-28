@@ -1,6 +1,6 @@
 # Manages Docker Compose services for production deployment
 
-.PHONY: help up down restart logs build clean status
+.PHONY: help up down restart logs build clean status update
 
 # Default target
 help:
@@ -52,6 +52,11 @@ build:
 	npm run build
 	@echo ""
 	@echo "Done building"
+
+update:
+	npm update
+	@echo ""
+	@echo "Done updating"
 
 start:
 	npm run start
