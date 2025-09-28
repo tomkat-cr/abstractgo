@@ -30,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 - New Docker images to reduce deployment time:
     - Dockerfile_python_node: Python, Node.js, Torch, Safetensors, Litellm, FastAPI, and FastMCP
     - Dockerfile_python_only: Python, Torch, Safetensors, Litellm, FastAPI, and FastMCP
+- Add "update" target in the Makefile to run npm update for dependency management.
 
 ### Changed
 - Client: the timeout was increased to 3 seconds to avoid the "Network error" processing PDF files in the UI.
@@ -37,9 +38,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 
 ### Fixed:
 - Modify run_mcp_server.sh to set CLIENT_PORT and SERVER_PORT for inspector, fixing the MCP inspector run that wasn't working apropriately.
-
+- Updated "jspdf" and "next" versions in package.json and package-lock.json to fix vulnerabilities.
+GS-236
 
 ## [1.0.0] - 2025-08-20
 
 ### Added
-- Project ideation and initial development.
+- Project ideation and initial development [GS-236].
