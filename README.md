@@ -123,7 +123,7 @@ Before running this project, make sure you have the following installed:
 - [OpenAI API key](https://platform.openai.com/account/api-keys) or [AI/ML API API key](https://aimlapi.com/) to use the the PDF upload feature and other LLM integrations
 
 NOTES:
-- After install poetry, run the following command to install its dependencies:<BR/>
+- After install poetry, run the following command to install its dependencies:
 
 1. If poetry was installed with `pip` run the following command:
 ```bash
@@ -652,7 +652,7 @@ The goal will be to implement a system capable of assigning medical articles to 
 
 There's a dataset available for training and testing your model. It contains 3,565 records from NCBI, BC5CDR, and synthetic data.
 
-File: [challenge_data-18-ago.csv](https://techspherecolombia.com/wp-content/uploads/2025/08/challenge_data-18-ago.csv)<br>
+File: [challenge_data-18-ago.csv](https://techspherecolombia.com/wp-content/uploads/2025/08/challenge_data-18-ago.csv)
 
 ### Dataset Structure
 

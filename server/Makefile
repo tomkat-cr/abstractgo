@@ -39,8 +39,6 @@ clean:
 	rm -rf .ruff_cache
 	rm -rf .coverage
 	rm -rf .coverage.*
-	rm -rf .pytest_cache
-	rm -rf .ruff_cache
 
 # Reinstall dependencies
 reinstall: clean install
