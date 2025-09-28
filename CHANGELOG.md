@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Removed
 
 
-## [1.1.0] - 2025-08-28
+## [1.1.0] - 2025-09-28
 
 ### Added
 - Enable HTTP Transport in MCP server:
@@ -34,6 +34,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Changed
 - Client: the timeout was increased to 3 seconds to avoid the "Network error" processing PDF files in the UI.
 - Final Report: Add the linkedin profiles to the team members and typos/inconsistencies fixes.
+
+### Fixed:
+- Modify run_mcp_server.sh to set CLIENT_PORT and SERVER_PORT for inspector, fixing the MCP inspector run that wasn't working apropriately.
 
 
 ## [1.0.0] - 2025-08-20
